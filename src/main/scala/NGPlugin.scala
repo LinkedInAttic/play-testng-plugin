@@ -7,7 +7,19 @@ import de.johoop.testngplugin.TestNGPlugin._
 
 object NGPlugin extends Plugin {
 
-  override def settings: Seq[Setting[_]] = super.settings ++ testNGSettings ++ Seq(
+  val PREFIX = "ng"
+
+  override def settings: Seq[Setting[_]] = super.settings ++ Seq(
+     scalaSource in Test <<= baseDirectory / "junit",
+     javaSource in Test <<= baseDirectory / "junit",
      testListeners in Test := Seq()
-   )
+   ) ++ inConfig(NGTest)(Defaults.testSettings ++ testNGSettings) ++ Seq(
+       scalaSource in NGTest <<= baseDirectory / "test",
+       javaSource in NGTest <<= baseDirectory / "test",
+       libraryDependencies <++= (testNGVersion in NGTest)(v => Seq(
+        "org.testng" % "testng" % v,
+        "de.johoop" %% "sbt-testng-interface" % "2.0.2"))
+  )
+
+  lazy val NGTest = config(PREFIX) extend(Test)
 }
