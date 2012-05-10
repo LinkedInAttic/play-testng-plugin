@@ -1,0 +1,7 @@
+name: SimpleSuite
+threadCount: 1
+ 
+tests:
+  - name: st
+    classes:
+      - SimpleTest
