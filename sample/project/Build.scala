@@ -2,6 +2,9 @@ import sbt._
 import Keys._
 import PlayProject._
 
+import com.linkedin.plugin.NGPlugin
+import com.linkedin.plugin.NGPlugin._
+
 object ApplicationBuild extends Build {
 
     val appName         = "Sample"
@@ -13,5 +16,7 @@ object ApplicationBuild extends Build {
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(
       // Add your own project settings here
     )
+    //.configs(NGTest)
+    //.settings(NGPlugin.ngSettings: _*)
 
 }

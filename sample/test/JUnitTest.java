@@ -1,6 +1,7 @@
-import org.testng.annotations.*;
- 
-public class SimpleTest {
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class JUnitTest {
  
  @Test
  public void aFastTest() {
@@ -9,7 +10,7 @@ public class SimpleTest {
  
  @Test
  public void aFailingTest() {
-    if(true) throw new RuntimeException("FAIL");
+    assertTrue(false);
     System.out.println("failing test");
  }
  

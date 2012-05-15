@@ -7,19 +7,23 @@ import de.johoop.testngplugin.TestNGPlugin._
 
 object NGPlugin extends Plugin {
 
-  val PREFIX = "ng"
+  override def settings: Seq[Setting[_]] = ngSettings
 
-  override def settings: Seq[Setting[_]] = super.settings ++ Seq(
-     scalaSource in Test <<= baseDirectory / "junit",
-     javaSource in Test <<= baseDirectory / "junit",
-     testListeners in Test := Seq()
-   ) ++ inConfig(NGTest)(Defaults.testSettings ++ testNGSettings) ++ Seq(
-       scalaSource in NGTest <<= baseDirectory / "test",
-       javaSource in NGTest <<= baseDirectory / "test",
-       libraryDependencies <++= (testNGVersion in NGTest)(v => Seq(
-        "org.testng" % "testng" % v,
-        "de.johoop" %% "sbt-testng-interface" % "2.0.2"))
+  def ngSettings: Seq[Setting[_]] = super.settings ++ Seq(
+    testOptions in Test := Seq(),
+    testOptions in Test += Tests.Setup { loader =>
+      loader.loadClass("play.api.Logger").getMethod("init", classOf[java.io.File]).invoke(null, new java.io.File("."))
+    },
+    testOptions in Test += Tests.Cleanup { loader =>
+      loader.loadClass("play.api.Logger").getMethod("shutdown").invoke(null)
+    },
+    //testOptions in Test += Tests.Argument(TestFrameworks.Specs2, "sequential", "true"),
+    testOptions in Test += Tests.Argument(TestFrameworks.JUnit,"junitxml", "console")
+   ) ++ 
+   inConfig(Test)(testNGSettings) ++
+   Seq(
+       libraryDependencies <++= (testNGVersion in Test)(v => Seq(
+         "org.testng" % "testng" % v % "test->default",
+         "de.johoop" %% "sbt-testng-interface" % "2.0.2" % "test"))
   )
-
-  lazy val NGTest = config(PREFIX) extend(Test)
 }
