@@ -14,6 +14,6 @@ publishMavenStyle := false
 
 libraryDependencies <++= (scalaVersion, sbtVersion) { 
 	case (scalaVersion, sbtVersion) => Seq(
-		sbtPluginExtra("de.johoop" % "sbt-testng-plugin" % "2.0.0", sbtVersion, scalaVersion)
+		sbtPluginExtra("de.johoop" % "sbt-testng-plugin" % "2.0.2", sbtVersion, scalaVersion)
 	)
 }
