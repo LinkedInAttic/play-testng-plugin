@@ -27,3 +27,23 @@ object NGPlugin extends Plugin {
          "de.johoop" %% "sbt-testng-interface" % "2.0.2" % "test"))
   )
 }
+
+import org.scalatools.testing.{Fingerprint, SubclassFingerprint, Framework, Logger, EventHandler}
+import java.util.concurrent.Semaphore
+import de.johoop.testnginterface._
+
+class WrappedTestNGFramework extends Framework {
+  val name = "TestNGFakeApp"
+
+  val tests = Array[Fingerprint](Annotated("com.linkedin.plugin.FakeApplication"))
+
+  def testRunner(testClassLoader: ClassLoader, loggers: Array[Logger]) = new WrappedTestNGRunner(testClassLoader, loggers, sharedState)
+
+  private[this] val sharedState = new TestRunState
+}
+
+class WrappedTestNGRunner(testClassLoader: ClassLoader, loggers: Array[Logger], state: TestRunState) extends TestNGRunner(testClassLoader: ClassLoader, loggers: Array[Logger], state: TestRunState) {
+  override def run(testClassname: String, fingerprint: Fingerprint, eventHandler: EventHandler, testOptions: Array[String]) = {
+    super.run(testClassname, fingerprint, eventHandler, testOptions)
+  }
+}
