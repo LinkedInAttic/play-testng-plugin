@@ -16,9 +16,10 @@ public class SimpleTest extends LITests {
  }
  
  @Test
- @WithFakeApplication(configurations = {
-   @Conf(key="test.fakeconf", value="fake"),
-   @Conf(key="test.loutre", value="oink")
+ @WithFakeApplication
+ @Confs({
+    @Conf(key="test.fakeconf", value="fake"),
+    @Conf(key="test.loutre", value="oink")
  })
  public void aFailingTest() {
    String f = play.Play.application().configuration().getString("test.fakeconf");

@@ -5,3 +5,4 @@ tests:
   - name: st
     classes:
       - SimpleTest
+      - AllWithFakeApp

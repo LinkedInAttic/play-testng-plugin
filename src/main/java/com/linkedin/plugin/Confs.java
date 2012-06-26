@@ -8,7 +8,6 @@ import java.lang.annotation.ElementType;
 
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Conf {
-  String key();
-  String value();
+public @interface Confs {
+  Conf[] value() default {};
 }
