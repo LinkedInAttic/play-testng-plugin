@@ -5,23 +5,24 @@ import play.test.*;
 import play.libs.F.*;
 
 import static play.test.Helpers.*;
- 
-public class SimpleTest {
- 
+
+import com.linkedin.plugin.*;
+
+public class SimpleTest extends LITests {
+    
  @Test
  public void aFastTest() {
-   running(fakeApplication(inMemoryDatabase()), new Runnable() {
-      public void run() {
-          System.out.println("Fast test");
-      }
-   });
+    System.out.println("Fast test");
  }
  
  @Test
- @com.linkedin.plugin.FakeApplication
+ @WithFakeApplication(configurations = {
+   @Conf(key="test.fakeconf", value="fake"),
+   @Conf(key="test.loutre", value="oink")
+ })
  public void aFailingTest() {
-    if(true) throw new RuntimeException("FAIL");
-    System.out.println("failing test");
+   String f = play.Play.application().configuration().getString("test.fakeconf");
+   if(!f.equals("fake"))
+     throw new RuntimeException("Assertion failed");
  }
- 
 }

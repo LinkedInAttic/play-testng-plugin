@@ -3,6 +3,9 @@ import sbt.Defaults._
 import sbt.Keys._
 
 object NGPluginBuild extends Build {
+  
+  // TODO: hard coded path...
+  val localrepo = Resolver.file("Play local repo",  new File(Path.userHome.absolutePath + "/Documents/jto_Play20/repository/local"))(Resolver.ivyStylePatterns)
 
   lazy val root = Project(
     id = "play-testng-helpers",
@@ -10,7 +13,10 @@ object NGPluginBuild extends Build {
     settings = Project.defaultSettings ++ commonSettings ++ Seq(
       version := "1.0-SNAPSHOT",
       crossScalaVersions := Seq("2.9.1"),
-      libraryDependencies ++= Seq()))
+      libraryDependencies ++= Seq(
+        "org.testng" % "testng" % "6.4" /*% "provided"*/,
+        "play" %% "play-test" % "2.1-SNAPSHOT" //% "provided"
+      )))
 
   lazy val NGPlugin = Project(
     id = "play-plugins-testng",
@@ -28,9 +34,10 @@ object NGPluginBuild extends Build {
 
   lazy val commonSettings: Seq[Setting[_]] = publishSettings ++ Seq(
     organization := "com.linkedin",
-    scalaVersion := "2.9.1")
+    scalaVersion := "2.9.1",
+    resolvers += localrepo)
 
   lazy val publishSettings: Seq[Setting[_]] = Seq(publishTo := Some(
-    Resolver.file("Local repo",  new File(Path.userHome.absolutePath + "/Documents/linkedin/play2/repository/local"))(Resolver.ivyStylePatterns)),
+    localrepo),
     publishMavenStyle := false)
 }
