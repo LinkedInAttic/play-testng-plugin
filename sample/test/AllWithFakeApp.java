@@ -13,6 +13,7 @@ import com.linkedin.plugin.*;
   @Conf(key="test.fakeconf", value="fake")
 })
 @Conf(key="test.anotherConf", value="fake")
+@WithPlugins({"plugins.DummyPlugin"})
 public class AllWithFakeApp extends LITests {
 
  @Test

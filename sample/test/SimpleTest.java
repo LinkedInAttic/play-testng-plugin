@@ -21,6 +21,7 @@ public class SimpleTest extends LITests {
     @Conf(key="test.fakeconf", value="fake"),
     @Conf(key="test.loutre", value="oink")
  })
+ @WithPlugins({"plugins.DummyPlugin"})
  public void aFailingTest() {
    String f = play.Play.application().configuration().getString("test.fakeconf");
    if(!f.equals("fake"))
