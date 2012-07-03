@@ -1,7 +1,7 @@
 # Test ng plugin
 
 This plugin is a TestNG runner for [Playframework 2.0](http://www.playframework.org/).
-It usgin the [TestNG sbt interface by jmhofer](https://bitbucket.org/jmhofer/sbt-testng-interface) to run TestNG Test suites, and adds Helpers.
+It using the [TestNG sbt interface by jmhofer](https://bitbucket.org/jmhofer/sbt-testng-interface) to run TestNG Test suites, and adds Helpers.
 Example can be found in the `sample` folder.
 
 ## Usage
@@ -12,7 +12,7 @@ Example can be found in the `sample` folder.
 
 Add the plugin in your `project/plugins.sbt` file.
 
-```
+```scala
 addSbtPlugin("com.linkedin" % "play-plugins-testng" % "1.0-SNAPSHOT")
 ```
 
@@ -20,7 +20,7 @@ addSbtPlugin("com.linkedin" % "play-plugins-testng" % "1.0-SNAPSHOT")
 
 Add the dependency in your `project/Build.scala` file.
 
-```
+```scala
 val appDependencies = Seq(
  "com.linkedin" %% "play-testng-helpers" % "1.0-SNAPSHOT"
 )
@@ -36,7 +36,7 @@ val appDependencies = Seq(
 
 It's equivalent to:
 
-```
+```java
 running(fakeApplication(), new Runnable() {
   public void run() {
     // Your
@@ -47,7 +47,7 @@ running(fakeApplication(), new Runnable() {
 This Annotation can be used on Test methods and test classes.
 When it's used on a class, a FakeApplication will be started at the beginning of each test, and stop when the test finishes.
 
-```
+```java
 @WithFakeApplication
 public class AllWithFakeApp extends LITests {
  @Test
@@ -61,7 +61,7 @@ public class AllWithFakeApp extends LITests {
 
 Or
 
-```
+```java
 public class SimpleTest extends LITests {
  @Test
  @WithFakeApplication
@@ -77,7 +77,7 @@ public class SimpleTest extends LITests {
 
 You can change the application configuration for testing purpose using the `@Conf` annotation:
 
-```
+```java
 public class SimpleTest extends LITests {
  
  @Test
@@ -97,7 +97,7 @@ public class SimpleTest extends LITests {
 ```
 Alternatively, if you need to change multiple configuration entries, you can wrap those `@Conf` into a `@Confs`:
 
-```
+```java
 public class SimpleTest extends LITests {
  
  @Test
@@ -121,7 +121,7 @@ public class SimpleTest extends LITests {
 
 The `@Conf` and `@Confs` annotation also work on test Classes. When used on classes, the new configuration will be used for **every** test in this class:
 
-```
+```java
 @WithFakeApplication
 @Conf(key="test.fakeconf", value="fake")
 public class AllWithFakeApp extends LITests {
@@ -136,7 +136,7 @@ public class AllWithFakeApp extends LITests {
 
 Declaration on classes and methods can be mixed:
 
-```
+```java
 @WithFakeApplication
 @Confs({
   @Conf(key="test.fakeconf", value="fake"),
@@ -168,7 +168,7 @@ public class AllWithFakeApp extends LITests {
 
 Using `@WithPlugins`, you can replace or add plugin to the FakeApplication ran for your test.
 
-```
+```java
  @Test
  @WithFakeApplication
  @WithPlugins({"plugins.DummyPlugin"})
