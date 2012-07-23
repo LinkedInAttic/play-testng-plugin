@@ -7,10 +7,15 @@ object NGPluginBuild extends Build {
   // TODO: hard coded path...
   val localrepo = Resolver.file("Play local repo",  new File(Path.userHome.absolutePath + "/Documents/jto_Play20/repository/local"))(Resolver.ivyStylePatterns)
 
-  lazy val root = Project(
+  lazy val root = Project("root", file("."),
+    settings = commonSettings ++ Seq(
+      name := "play-testng"
+    )) aggregate(NGHelpers, NGPlugin)
+
+  lazy val NGHelpers = Project(
     id = "play-testng-helpers",
-    base = file("."),
-    settings = Project.defaultSettings ++ commonSettings ++ Seq(
+    base = file("helpers"),
+    settings = commonSettings ++ Seq(
       version := "1.0-SNAPSHOT",
       crossScalaVersions := Seq("2.9.1"),
       libraryDependencies ++= Seq(
@@ -21,7 +26,7 @@ object NGPluginBuild extends Build {
   lazy val NGPlugin = Project(
     id = "play-plugins-testng",
     base = file("plugin"),
-    settings = Project.defaultSettings ++ commonSettings ++ Seq(
+    settings = commonSettings ++ Seq(
       sbtPlugin := true,
       version := "1.0-SNAPSHOT",
       crossScalaVersions := Seq("2.9.1"),
@@ -32,7 +37,7 @@ object NGPluginBuild extends Build {
         )
       }))
 
-  lazy val commonSettings: Seq[Setting[_]] = publishSettings ++ Seq(
+  lazy val commonSettings: Seq[Setting[_]] = Project.defaultSettings ++ publishSettings ++ Seq(
     organization := "com.linkedin",
     scalaVersion := "2.9.1",
     resolvers += localrepo)
