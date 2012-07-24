@@ -26,7 +26,7 @@ val appDependencies = Seq(
 )
 ```
 
-***Test classes must extend LITests to use the helpers.***
+***Test classes must extend NGTests to use the helpers.***
 
 ### Annotations
 
@@ -49,7 +49,7 @@ When it's used on a class, a FakeApplication will be started at the beginning of
 
 ```java
 @WithFakeApplication
-public class AllWithFakeApp extends LITests {
+public class AllWithFakeApp extends NGTests {
  @Test
  public void aFastTest() {
     String f = play.Play.application().configuration().getString("test.loutre");
@@ -62,7 +62,7 @@ public class AllWithFakeApp extends LITests {
 Or
 
 ```java
-public class SimpleTest extends LITests {
+public class SimpleTest extends NGTests {
  @Test
  @WithFakeApplication
  public void aFailingTest() {
@@ -78,7 +78,7 @@ public class SimpleTest extends LITests {
 You can change the application configuration for testing purpose using the `@Conf` annotation:
 
 ```java
-public class SimpleTest extends LITests {
+public class SimpleTest extends NGTests {
  
  @Test
  public void aFastTest() {
@@ -98,7 +98,7 @@ public class SimpleTest extends LITests {
 Alternatively, if you need to change multiple configuration entries, you can wrap those `@Conf` into a `@Confs`:
 
 ```java
-public class SimpleTest extends LITests {
+public class SimpleTest extends NGTests {
  
  @Test
  public void aFastTest() {
@@ -124,7 +124,7 @@ The `@Conf` and `@Confs` annotation also work on test Classes. When used on clas
 ```java
 @WithFakeApplication
 @Conf(key="test.fakeconf", value="fake")
-public class AllWithFakeApp extends LITests {
+public class AllWithFakeApp extends NGTests {
  @Test
  public void anotherFastTest() {
    String f = play.Play.application().configuration().getString("test.fakeconf");
@@ -142,7 +142,7 @@ Declaration on classes and methods can be mixed:
   @Conf(key="test.fakeconf", value="fake"),
   @Conf(key="test.anotherConf", value="fake")
 })
-public class AllWithFakeApp extends LITests {
+public class AllWithFakeApp extends NGTests {
  
  @Test
  public void testAnotherConf() {

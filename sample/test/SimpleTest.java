@@ -8,7 +8,7 @@ import static play.test.Helpers.*;
 
 import com.linkedin.plugin.*;
 
-public class SimpleTest extends LITests {
+public class SimpleTest extends NGTests {
     
  @Test
  public void aFastTest() {

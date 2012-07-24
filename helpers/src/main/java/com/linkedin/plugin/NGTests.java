@@ -21,7 +21,7 @@ import org.testng.*;
 import play.test.*;
 import static play.test.Helpers.*;
 
-public class LITests implements IHookable{
+public class NGTests implements IHookable{
   
   private Method testMethod(ITestResult testResult){
     return testResult.getMethod().getConstructorOrMethod().getMethod();
