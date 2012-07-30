@@ -7,7 +7,9 @@ object NGPluginBuild extends Build {
   val artifactory = "http://artifactory.corp.linkedin.com:8081/artifactory/"
   val releases = "Artifactory releases"  at artifactory + "release"
   val snapshots = "Artifactory snapshots"  at artifactory + "snapshot"
-  val sandbox = "Artifactory sandbox" at artifactory + "ext-sandbox"
+
+  var sandbox = Resolver.url("Artifactory sandbox", url(artifactory + "ext-sandbox"))(Patterns("[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"))  
+
   val local = Resolver.file("Play local repo",  new File(Path.userHome.absolutePath + "/Documents/jto_Play20/repository/local"))(Resolver.ivyStylePatterns)
 
   lazy val root = Project("root", file("."),
@@ -40,17 +42,19 @@ object NGPluginBuild extends Build {
     organization := "com.linkedin",
     scalaVersion := "2.9.1",
     crossScalaVersions := Seq("2.9.1"),
-    version := "0.0.1",
+    version := "1.0-SNAPSHOT",
     resolvers ++= Seq(snapshots, releases, local))
 
   lazy val publishSettings: Seq[Setting[_]] = Seq(
-    publishTo <<= version { (v: String) =>
-      if (v.trim.endsWith("SNAPSHOT")) 
-        Some(snapshots) 
-      else
-        Some(releases)
-    },
-    //publishTo := Some(sandbox),
-    credentials += Credentials("Artifactory Realm", "artifactory.corp.linkedin.com", "<login>", "<password>"),
+    // publishTo <<= version { (v: String) =>
+    //           if (v.trim.endsWith("SNAPSHOT")) 
+    //             Some(snapshots) 
+    //           else
+    //             Some(releases)
+    //         },
+    publishTo := Some(sandbox),
+    credentials ++= Seq(
+      Credentials(Path.userHome / ".sbt" / ".licredentials")
+    ),
     publishMavenStyle := false)
 }
