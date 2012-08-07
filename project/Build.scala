@@ -4,13 +4,17 @@ import sbt.Keys._
 
 object NGPluginBuild extends Build {
 
-  val artifactory = "http://artifactory.corp.linkedin.com:8081/artifactory/"
-  val releases = "Artifactory releases"  at artifactory + "release"
-  val snapshots = "Artifactory snapshots"  at artifactory + "snapshot"
+  object Repos {
+    val pattern = Patterns(
+      Seq("[organisation]/[module]/[revision]/[module]-[revision](-[classifier]).ivy"),
+      Seq("[organisation]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]"),
+      true
+    )
 
-  var sandbox = Resolver.url("Artifactory sandbox", url(artifactory + "ext-sandbox"))(Patterns("[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"))  
-
-  val local = Resolver.file("Play local repo",  new File(Path.userHome.absolutePath + "/Documents/jto_Play20/repository/local"))(Resolver.ivyStylePatterns)
+    val artifactory = "http://artifactory.corp.linkedin.com:8081/artifactory/"
+    val mavenLocal = Resolver.file("file",  new File(Path.userHome.absolutePath + "/Documents/mvn-repo/snapshots"))
+    val sandbox = Resolver.url("Artifactory sandbox", url(artifactory + "ext-sandbox"))(pattern)
+  }
 
   lazy val root = Project("root", file("."),
     settings = commonSettings ++ Seq(
@@ -43,16 +47,16 @@ object NGPluginBuild extends Build {
     scalaVersion := "2.9.1",
     crossScalaVersions := Seq("2.9.1"),
     version := "1.0-SNAPSHOT",
-    resolvers ++= Seq(snapshots, releases, local))
+    resolvers ++= Seq(Repos.sandbox))
 
   lazy val publishSettings: Seq[Setting[_]] = Seq(
     // publishTo <<= version { (v: String) =>
-    //           if (v.trim.endsWith("SNAPSHOT")) 
-    //             Some(snapshots) 
-    //           else
-    //             Some(releases)
-    //         },
-    publishTo := Some(sandbox),
+    //  if (v.trim.endsWith("SNAPSHOT")) 
+    //    Some(Repos.snapshots) 
+    //  else
+    //    Some(Repos.releases)
+    // },
+    publishTo := Some(Repos.sandbox),
     credentials ++= Seq(
       Credentials(Path.userHome / ".sbt" / ".licredentials")
     ),
