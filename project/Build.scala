@@ -15,6 +15,11 @@ object NGPluginBuild extends Build {
     val mavenLocal = Resolver.file("file",  new File(Path.userHome.absolutePath + "/Documents/mvn-repo/snapshots"))
     val sandbox = Resolver.url("Artifactory sandbox", url(artifactory + "ext-sandbox"))(pattern)
   }
+  
+  object Settings {
+    val version = "2012.07.30.77b960b" // matches play build to plugin version
+  }
+
 
   lazy val root = Project("root", file("."),
     settings = commonSettings ++ Seq(
@@ -27,7 +32,7 @@ object NGPluginBuild extends Build {
     settings = commonSettings ++ Seq(
       libraryDependencies ++= Seq(
         "org.testng" % "testng" % "6.4" /*% "provided"*/,
-        "play" %% "play-test" % "2.1-SNAPSHOT" //% "provided"
+        "play" %% "play-test" % Settings.version //% "provided"
       )))
 
   lazy val NGPlugin = Project(
@@ -46,7 +51,7 @@ object NGPluginBuild extends Build {
     organization := "com.linkedin",
     scalaVersion := "2.9.1",
     crossScalaVersions := Seq("2.9.1"),
-    version := "1.0-SNAPSHOT",
+    version := Settings.version,
     resolvers ++= Seq(Repos.sandbox))
 
   lazy val publishSettings: Seq[Setting[_]] = Seq(
