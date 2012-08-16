@@ -14,6 +14,7 @@ object NGPluginBuild extends Build {
     val artifactory = "http://artifactory.corp.linkedin.com:8081/artifactory/"
     val mavenLocal = Resolver.file("file",  new File(Path.userHome.absolutePath + "/Documents/mvn-repo/snapshots"))
     val sandbox = Resolver.url("Artifactory sandbox", url(artifactory + "ext-sandbox"))(pattern)
+    val typeSafeReleases = "TypeSafeRelease" at "http://repo.typesafe.com/typesafe/releases/"
   }
   
   object Settings {
@@ -51,7 +52,7 @@ object NGPluginBuild extends Build {
     organization := "com.linkedin",
     scalaVersion := "2.9.2",
     version := Settings.version,
-    resolvers ++= Seq(Repos.sandbox))
+    resolvers ++= Seq(Repos.sandbox, Repos.typeSafeReleases))
 
   lazy val publishSettings: Seq[Setting[_]] = Seq(
     // publishTo <<= version { (v: String) =>
