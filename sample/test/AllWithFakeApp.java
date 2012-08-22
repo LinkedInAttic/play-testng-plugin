@@ -8,7 +8,7 @@ import static play.test.Helpers.*;
 
 import com.linkedin.plugin.*;
 
-@WithFakeApplication
+@WithFakeApplication(path=".")
 @Confs({
   @Conf(key="test.fakeconf", value="fake")
 })

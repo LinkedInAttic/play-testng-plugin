@@ -16,6 +16,7 @@ package com.linkedin.plugin;
 import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
+import java.io.File;
 
 import org.testng.*;
 import play.test.*;
@@ -31,20 +32,23 @@ public class NGTests implements IHookable{
     return testResult.getTestClass().getRealClass();
   }
   
-  private Boolean hasFakeApp(ITestResult testResult){
+  private WithFakeApplication getFakeApp(ITestResult testResult){
     Class clazz = testClass(testResult);
     Method m = testMethod(testResult);
     
     WithFakeApplication classFakeApp = (WithFakeApplication)clazz.getAnnotation(WithFakeApplication.class);
     WithFakeApplication a = m.getAnnotation(WithFakeApplication.class);
 
-    return classFakeApp != null || a != null;
+    if(a != null)
+      return a;
+    else
+      return classFakeApp;
   }
   
   private Map<String, String> getConf(ITestResult testResult){
     Map<String, String> conf = new HashMap<String, String>();
     
-    if(!hasFakeApp(testResult))
+    if(getFakeApp(testResult) == null)
       return conf;
     
     Class clazz = testClass(testResult);
@@ -91,8 +95,10 @@ public class NGTests implements IHookable{
   }
 
   public void run(final IHookCallBack icb, ITestResult testResult) {
-    if(hasFakeApp(testResult)){
-      FakeApplication app = fakeApplication(getConf(testResult), getPlugins(testResult));
+    WithFakeApplication fa = getFakeApp(testResult);
+    if(fa != null){
+      String path = fa.path();
+      FakeApplication app = new FakeApplication(new File(path), Helpers.class.getClassLoader(), getConf(testResult), getPlugins(testResult));
       start(app);
       icb.runTestMethod(testResult);
       stop(app);
