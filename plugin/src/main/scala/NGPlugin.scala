@@ -37,7 +37,8 @@ object NGPlugin extends Plugin {
    Seq(
        libraryDependencies <++= (testNGVersion in Test)(v => Seq(
          "org.testng" % "testng" % v % "test->default",
-         "de.johoop" %% "sbt-testng-interface" % "2.0.2" % "test"))
+         // If changing this, be sure to change in Build.scala also.
+         "de.johoop" %% "sbt-testng-interface" % "2.0.3" % "test"))
   )
 }
 
