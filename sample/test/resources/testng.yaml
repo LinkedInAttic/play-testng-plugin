@@ -6,3 +6,4 @@ tests:
     classes:
       - SimpleTest
       - AllWithFakeApp
+      - IntegrationTest

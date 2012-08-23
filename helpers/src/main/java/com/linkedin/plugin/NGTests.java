@@ -22,7 +22,18 @@ import org.testng.*;
 import play.test.*;
 import static play.test.Helpers.*;
 
-public class NGTests implements IHookable{
+import play.libs.F.*;
+
+// TODO: refactor
+public class NGTests implements IHookable {
+  
+  // XXX: Evil hack, may lead to race conditions...
+  private TestBrowser _testBrowser = null;
+  protected TestBrowser browser(){
+    if(_testBrowser == null)
+      throw new RuntimeException("No TestBrowser available, test class or method must be annotated with @WithTestServer");
+    return _testBrowser;
+  }
   
   private Method testMethod(ITestResult testResult){
     return testResult.getMethod().getConstructorOrMethod().getMethod();
@@ -31,18 +42,26 @@ public class NGTests implements IHookable{
   private Class testClass(ITestResult testResult){
     return testResult.getTestClass().getRealClass();
   }
-  
-  private WithFakeApplication getFakeApp(ITestResult testResult){
+
+  private <T extends Annotation> T getAnnotationFromMethodOrClass(Class<T> c, ITestResult testResult){
     Class clazz = testClass(testResult);
     Method m = testMethod(testResult);
     
-    WithFakeApplication classFakeApp = (WithFakeApplication)clazz.getAnnotation(WithFakeApplication.class);
-    WithFakeApplication a = m.getAnnotation(WithFakeApplication.class);
+    T classAnn = (T)clazz.getAnnotation(c);
+    T a = m.getAnnotation(c);
 
     if(a != null)
       return a;
     else
-      return classFakeApp;
+      return classAnn;
+  }
+
+  private WithFakeApplication getFakeApp(ITestResult testResult){
+    return getAnnotationFromMethodOrClass(WithFakeApplication.class, testResult);
+  }
+
+  private WithTestServer getTestServer(ITestResult testResult){
+    return getAnnotationFromMethodOrClass(WithTestServer.class, testResult);
   }
   
   private Map<String, String> getConf(ITestResult testResult){
@@ -94,14 +113,34 @@ public class NGTests implements IHookable{
     return plugins;
   }
 
-  public void run(final IHookCallBack icb, ITestResult testResult) {
-    WithFakeApplication fa = getFakeApp(testResult);
+  private FakeApplication buildFakeApplication(WithFakeApplication fa, ITestResult testResult){
     if(fa != null){
       String path = fa.path();
-      FakeApplication app = new FakeApplication(new File(path), Helpers.class.getClassLoader(), getConf(testResult), getPlugins(testResult));
+      return new FakeApplication(new File(path), Helpers.class.getClassLoader(), getConf(testResult), getPlugins(testResult));
+    }
+    return null;
+  }
+
+  public void run(final IHookCallBack icb, final ITestResult testResult) {
+    WithFakeApplication fa = getFakeApp(testResult);
+    WithTestServer ts = getTestServer(testResult);
+
+    if(fa != null){
+      FakeApplication app = buildFakeApplication(fa, testResult);
       start(app);
       icb.runTestMethod(testResult);
       stop(app);
+    }
+    else if(ts != null){
+      FakeApplication fake = buildFakeApplication(ts.fakeApplication(), testResult);
+      TestServer server =testServer(ts.port(), fake);
+
+      running(server, HTMLUNIT, new Callback<TestBrowser>() {
+        public void invoke(final TestBrowser browser) {
+          _testBrowser = browser;
+          icb.runTestMethod(testResult);
+        }
+      });
     }
     else{
       icb.runTestMethod(testResult);
