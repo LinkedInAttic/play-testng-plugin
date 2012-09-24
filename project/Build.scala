@@ -28,7 +28,7 @@ object NGPluginBuild extends Build {
     settings = commonSettings ++ Seq(
       libraryDependencies ++= Seq(
         "org.testng" % "testng" % "6.4", // % "provided"
-        "play" %% "play-test" % "2012.08.15.c4c3576" //% "provided"
+        "play" %% "play-test" % "2012.09.20.1886ca6" //% "provided"
       )))
 
   lazy val NGPlugin = Project(
@@ -47,7 +47,7 @@ object NGPluginBuild extends Build {
   lazy val commonSettings: Seq[Setting[_]] = Project.defaultSettings ++ publishSettings ++ Seq(
     organization := "com.linkedin",
     scalaVersion := "2.9.2",
-    version := "2012.08.15.c4c3576.v5",
+    version := "2012.09.20.1886ca6",
     resolvers ++= Seq(Repos.sandbox, Repos.typeSafeReleases))
 
   lazy val publishSettings: Seq[Setting[_]] = Seq(
