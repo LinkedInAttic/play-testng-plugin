@@ -25,21 +25,21 @@ public class AllWithFakeApp extends NGTests {
     if(!f.equals("oink"))
        throw new RuntimeException("Assertion failed");
  }
- 
+
  @Test
  public void anotherFastTest() {
    String f = play.Play.application().configuration().getString("test.fakeconf");
    if(!f.equals("fake"))
      throw new RuntimeException("Assertion failed");
  }
- 
+
  @Test
  public void testAnotherConf() {
    String f = play.Play.application().configuration().getString("test.anotherConf");
    if(!f.equals("fake"))
      throw new RuntimeException("Assertion failed");
  }
- 
+
  @Test
  @Conf(key="test.singleConf", value="fake")
  public void testASingleConf() {

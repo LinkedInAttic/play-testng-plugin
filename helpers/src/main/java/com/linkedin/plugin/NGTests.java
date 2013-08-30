@@ -1,11 +1,11 @@
 // Copyright 2012 LinkedIn
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //    http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,15 +26,15 @@ import play.libs.F.*;
 
 // TODO: refactor
 public class NGTests implements IHookable {
-  
+
   private class AnnotationsReader {
-    
+
     private ITestResult itr;
-    
+
     public AnnotationsReader(ITestResult testResult){
       itr = testResult;
     }
-    
+
     private Method testMethod(){
       return itr.getMethod().getConstructorOrMethod().getMethod();
     }
@@ -112,11 +112,11 @@ public class NGTests implements IHookable {
 
       return plugins;
     }
-    
+
     private FakeApplication buildFakeApplication(WithFakeApplication fa){
       if(fa != null){
         String path = fa.path();
-        return new FakeApplication(new File(path), Helpers.class.getClassLoader(), getConf(), getPlugins());
+        return new FakeApplication(new File(path), Helpers.class.getClassLoader(), getConf(), getPlugins(), null);
       }
       return null;
     }
@@ -126,7 +126,7 @@ public class NGTests implements IHookable {
       return testServer(ts.port(), fake);
     }
   }
-  
+
   // XXX: Evil hack, may lead to race conditions...
   private TestBrowser _testBrowser = null;
   protected TestBrowser browser(){
@@ -136,9 +136,9 @@ public class NGTests implements IHookable {
   }
 
   public void run(final IHookCallBack icb, final ITestResult testResult) {
-    
+
     AnnotationsReader reader = new AnnotationsReader(testResult);
-    
+
     WithFakeApplication fa = reader.getFakeApp();
     WithTestServer ts = reader.getTestServer();
 

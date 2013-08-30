@@ -19,10 +19,10 @@ object NGPluginBuild extends Build {
                                url(ArtifactoryBaseUrl + "ext-sandbox"))(LinkedInPatterns)
     val core = Resolver.url("Artifactory CORE",
                             url(ArtifactoryBaseUrl + "CORE"))(LinkedInPatterns)
-    
+
     val typeSafeReleases = "TypeSafeRelease" at "http://repo.typesafe.com/typesafe/releases/"
   }
-  
+
   lazy val root = Project("root", file("."),
     settings = commonSettings ++ Seq(
       name := "play-testng"
@@ -34,7 +34,7 @@ object NGPluginBuild extends Build {
     settings = commonSettings ++ Seq(
       libraryDependencies ++= Seq(
         "org.testng" % "testng" % "6.4", // % "provided"
-        "play" %% "play-test" % "2012.09.20.1886ca6" //% "provided"
+        "com.typesafe.play" %% "play-test" % "2.2.0-RC1" //% "provided"
       )))
 
   lazy val NGPlugin = Project(
@@ -42,24 +42,24 @@ object NGPluginBuild extends Build {
     base = file("plugin"),
     settings = commonSettings ++ Seq(
       sbtPlugin := true,
-      libraryDependencies <++= (scalaVersion, sbtVersion) { 
+      libraryDependencies <++= (scalaVersion, sbtVersion) {
         case (scalaVersion, sbtVersion) => Seq(
           // If changing this, be sure to change in NGPlugin.scala also.
-          sbtPluginExtra("de.johoop" % "sbt-testng-plugin" % "2.0.3", "0.12", scalaVersion),
-          "de.johoop" %% "sbt-testng-interface" % "2.0.3"
+          sbtPluginExtra("de.johoop" % "sbt-testng-plugin" % "3.0.0", "0.13", "2.10"),
+          "de.johoop" %% "sbt-testng-interface" % "3.0.0"
         )
       }))
 
   lazy val commonSettings: Seq[Setting[_]] = Project.defaultSettings ++ publishSettings ++ Seq(
     organization := "com.linkedin",
-    scalaVersion := "2.9.2",
+    scalaVersion := "2.10.1",
     version := "2012.09.20.1886ca6-v5",
     resolvers ++= Seq(Repos.localRepo, Repos.sandbox, Repos.typeSafeReleases))
 
   lazy val publishSettings: Seq[Setting[_]] = Seq(
     // publishTo <<= version { (v: String) =>
-    //  if (v.trim.endsWith("SNAPSHOT")) 
-    //    Some(Repos.snapshots) 
+    //  if (v.trim.endsWith("SNAPSHOT"))
+    //    Some(Repos.snapshots)
     // else
     //   Some(Repos.releases)
     //},
