@@ -10,7 +10,7 @@ object ApplicationBuild extends Build {
     val appVersion      = "1.0-SNAPSHOT"
 
     val appDependencies = Seq(
-      "com.linkedin" %% "play-testng-helpers" % "2012.09.20.1886ca6-v5"
+      "com.linkedin" %% "play-testng-helpers" % "2.2.0-RC1-v1"
     )
 
     val main = play.Project(appName, appVersion, appDependencies).settings(
