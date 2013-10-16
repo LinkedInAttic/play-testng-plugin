@@ -53,7 +53,7 @@ object NGPluginBuild extends Build {
   lazy val commonSettings: Seq[Setting[_]] = Project.defaultSettings ++ publishSettings ++ Seq(
     organization := "com.linkedin",
     scalaVersion := "2.10.1",
-    version := "2.2.0-v1",
+    version := "2.2.0-v2",
     resolvers ++= Seq(Repos.localRepo, Repos.sandbox, Repos.typeSafeReleases))
 
   lazy val publishSettings: Seq[Setting[_]] = Seq(
