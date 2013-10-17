@@ -16,7 +16,7 @@ object NGPluginBuild extends Build {
 
     val ArtifactoryBaseUrl = "http://artifactory.corp.linkedin.com:8081/artifactory/"
     val sandbox = Resolver.url("Artifactory sandbox",
-                               url(ArtifactoryBaseUrl + "ext-sandbox"))(LinkedInPatterns)
+                               url(ArtifactoryBaseUrl + "repo"))(LinkedInPatterns)
     val core = Resolver.url("Artifactory CORE",
                             url(ArtifactoryBaseUrl + "CORE"))(LinkedInPatterns)
 
@@ -34,7 +34,7 @@ object NGPluginBuild extends Build {
     settings = commonSettings ++ Seq(
       libraryDependencies ++= Seq(
         "org.testng" % "testng" % "6.8.5", // % "provided"
-        "com.typesafe.play" %% "play-test" % "2.2.0" //% "provided"
+        "com.typesafe.play" %% "play-test" % "2013.10.16-master-56bcfdd" //% "provided"
       )))
 
   lazy val NGPlugin = Project(
@@ -53,7 +53,7 @@ object NGPluginBuild extends Build {
   lazy val commonSettings: Seq[Setting[_]] = Project.defaultSettings ++ publishSettings ++ Seq(
     organization := "com.linkedin",
     scalaVersion := "2.10.1",
-    version := "2.2.0-v2",
+    version := "2013.10.16-master-56bcfdd-v2",
     resolvers ++= Seq(Repos.localRepo, Repos.sandbox, Repos.typeSafeReleases))
 
   lazy val publishSettings: Seq[Setting[_]] = Seq(
