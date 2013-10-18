@@ -5,22 +5,7 @@ import sbt.Keys._
 object NGPluginBuild extends Build {
 
   object Repos {
-    val LinkedInPatterns = Patterns(
-      Seq("[organization]/[module]/[revision]/[module]-[revision].ivy"),
-      Seq("[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"),
-      isMavenCompatible = true)
-
-    val LocalRepoName = "~/local-repo"
-    val LocalRepoPath = file(System.getProperty("user.home") + "/local-repo")
-    val localRepo = Resolver.file(LocalRepoName, LocalRepoPath)(LinkedInPatterns)
-
-    val ArtifactoryBaseUrl = "http://artifactory.corp.linkedin.com:8081/artifactory/"
-    val sandbox = Resolver.url("Artifactory sandbox",
-                               url(ArtifactoryBaseUrl + "repo"))(LinkedInPatterns)
-    val core = Resolver.url("Artifactory CORE",
-                            url(ArtifactoryBaseUrl + "CORE"))(LinkedInPatterns)
-
-    val typeSafeReleases = "TypeSafeRelease" at "http://repo.typesafe.com/typesafe/releases/"
+    val typeSafeReleases = "Typesafe Releases Repository" at "http://repo.typesafe.com/typesafe/releases/"
   }
 
   lazy val root = Project("root", file("."),
@@ -34,7 +19,7 @@ object NGPluginBuild extends Build {
     settings = commonSettings ++ Seq(
       libraryDependencies ++= Seq(
         "org.testng" % "testng" % "6.8.5", // % "provided"
-        "com.typesafe.play" %% "play-test" % "2013.10.16-master-56bcfdd" //% "provided"
+        "com.typesafe.play" %% "play-test" % "2.2.0" //% "provided"
       )))
 
   lazy val NGPlugin = Project(
@@ -50,27 +35,9 @@ object NGPluginBuild extends Build {
         )
       }))
 
-  lazy val commonSettings: Seq[Setting[_]] = Project.defaultSettings ++ publishSettings ++ Seq(
+  lazy val commonSettings: Seq[Setting[_]] = Project.defaultSettings ++ Seq(
     organization := "com.linkedin",
     scalaVersion := "2.10.1",
-    version := "2013.10.16-master-56bcfdd-v2",
-    resolvers ++= Seq(Repos.localRepo, Repos.sandbox, Repos.typeSafeReleases))
-
-  lazy val publishSettings: Seq[Setting[_]] = Seq(
-    // publishTo <<= version { (v: String) =>
-    //  if (v.trim.endsWith("SNAPSHOT"))
-    //    Some(Repos.snapshots)
-    // else
-    //   Some(Repos.releases)
-    //},
-    // publishLocalConfiguration <<= (packagedArtifacts, publishMavenStyle, deliverLocal, ivyLoggingLevel) map {
-    //   (artifacts, mavenStyle, ivyFile, loggingLevel) =>
-    //   Classpaths.publishConfig(artifacts, if (mavenStyle) None else Some(ivyFile), Seq("sha1", "md5"),
-    //                            Repos.LocalRepoName, loggingLevel)
-    // },
-    publishTo := Some(Repos.core),
-    credentials ++= Seq(
-      Credentials(Path.userHome / ".sbt" / ".licredentials")
-    ),
-    publishMavenStyle := false)
+    version := "2.2.0",
+    resolvers ++= Seq(Repos.typeSafeReleases))
 }

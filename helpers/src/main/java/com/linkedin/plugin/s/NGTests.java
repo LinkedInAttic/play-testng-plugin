@@ -34,7 +34,7 @@ import java.util.Collections;
 import static play.test.Helpers.HTMLUNIT;
 
 /**
- * Scala API to be extended by TestNG classes to use custom @FakeApplication/@TestServer annotations.
+ * Scala API to be extended by TestNG classes to use custom @WithFakeApplication/@WithTestServer annotations.
  */
 public class NGTests extends NGTestsBase implements IHookable {
 
@@ -72,7 +72,7 @@ public class NGTests extends NGTestsBase implements IHookable {
   private TestBrowser _testBrowser = null;
 
   /**
-   * Scala API: gets a TestBrowser for Scala test classes.
+   * Scala API: gets a TestBrowser for Scala test classes. (Can only be used with @WithTestServer)
    */
   protected TestBrowser browser() {
     if (_testBrowser == null)

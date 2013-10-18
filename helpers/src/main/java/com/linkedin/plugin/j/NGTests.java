@@ -28,7 +28,7 @@ import java.io.File;
 import static play.test.Helpers.HTMLUNIT;
 
 /**
- * Java API to be extended by TestNG classes to use custom @FakeApplication/@TestServer annotations.
+ * Java API to be extended by TestNG classes to use custom @WithFakeApplication/@WithTestServer annotations.
  */
 public class NGTests extends NGTestsBase implements IHookable {
 
@@ -57,7 +57,7 @@ public class NGTests extends NGTestsBase implements IHookable {
   private TestBrowser _testBrowser = null;
 
   /**
-   * Java API: gets a TestBrowser for Java test classes.
+   * Java API: gets a TestBrowser for Java test classes. (Can only be used with @WithTestServer)
    */
   protected TestBrowser browser() {
     if (_testBrowser == null)
