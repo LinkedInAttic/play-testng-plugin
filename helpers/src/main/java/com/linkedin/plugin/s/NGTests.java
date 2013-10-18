@@ -30,31 +30,18 @@ import scala.runtime.AbstractFunction1;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import static play.test.Helpers.HTMLUNIT;
 
+/**
+ * Scala API to be extended by TestNG classes to use custom @FakeApplication/@TestServer annotations.
+ */
 public class NGTests extends NGTestsBase implements IHookable {
 
-  private class AnnotationsReader extends NGTestsBase.AnnotationsReader {
+  private class AnnotationsReader extends NGTestsBase.AnnotationsReader<WithFakeApplication, WithTestServer> {
 
-    public AnnotationsReader(ITestResult testResult){
-      super(testResult);
-    }
-
-    protected Map<String, Object> getConf() {
-      if (getFakeApp() == null)
-        return new HashMap<String, Object>();
-      return super.getConf();
-    }
-
-    private WithFakeApplication getFakeApp() {
-      return getAnnotationFromMethodOrClass(WithFakeApplication.class);
-    }
-
-    private WithTestServer getTestServer() {
-      return getAnnotationFromMethodOrClass(WithTestServer.class);
+    public AnnotationsReader(ITestResult testResult) {
+      super(testResult, WithFakeApplication.class, WithTestServer.class);
     }
 
     private FakeApplication buildFakeApplication(WithFakeApplication fa) {
@@ -83,6 +70,10 @@ public class NGTests extends NGTestsBase implements IHookable {
 
   // XXX: Evil hack, may lead to race conditions...
   private TestBrowser _testBrowser = null;
+
+  /**
+   * Scala API: gets a TestBrowser for Scala test classes.
+   */
   protected TestBrowser browser() {
     if (_testBrowser == null)
       throw new RuntimeException("No TestBrowser available, test class or method must be annotated with @WithTestServer");
@@ -93,8 +84,8 @@ public class NGTests extends NGTestsBase implements IHookable {
 
     AnnotationsReader reader = new AnnotationsReader(testResult);
 
-    WithFakeApplication fa = reader.getFakeApp();
-    WithTestServer ts = reader.getTestServer();
+    WithFakeApplication fa = reader.getFakeAppAnnotation();
+    WithTestServer ts = reader.getTestServerAnnotation();
 
     if (fa != null)
     {

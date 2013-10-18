@@ -22,20 +22,32 @@ import java.util.*;
 
 public abstract class NGTestsBase implements IHookable {
 
-  protected abstract class AnnotationsReader {
+  protected abstract class AnnotationsReader<F extends Annotation, T extends Annotation> {
 
     protected ITestResult itr;
+    protected Class<F> fakeAppAnnotationClass;
+    protected Class<T> testServerAnnotationClass;
 
-    public AnnotationsReader(ITestResult testResult){
+    public AnnotationsReader(ITestResult testResult, Class<F> fakeAppAnnotationClass, Class<T> testServerAnnotationClass) {
       itr = testResult;
+      this.fakeAppAnnotationClass = fakeAppAnnotationClass;
+      this.testServerAnnotationClass = testServerAnnotationClass;
     }
 
-    protected <T extends Annotation> T getAnnotationFromMethodOrClass(Class<T> c) {
+    public F getFakeAppAnnotation() {
+      return getAnnotationFromMethodOrClass(fakeAppAnnotationClass);
+    }
+
+    public T getTestServerAnnotation() {
+      return getAnnotationFromMethodOrClass(testServerAnnotationClass);
+    }
+
+    protected <A extends Annotation> A getAnnotationFromMethodOrClass(Class<A> c) {
       Class clazz = testClass();
       Method m = testMethod();
 
-      T classAnn = (T)clazz.getAnnotation(c);
-      T a = m.getAnnotation(c);
+      A classAnn = (A) clazz.getAnnotation(c);
+      A a = m.getAnnotation(c);
 
       if(a != null)
         return a;
@@ -46,7 +58,8 @@ public abstract class NGTestsBase implements IHookable {
     protected Map<String, Object> getConf() {
       Map<String, Object> conf = new HashMap<String, Object>();
 
-      // null checking of fake app is done in subclasses
+      if (getFakeAppAnnotation() == null)
+        return conf;
 
       Class clazz = testClass();
       Method m = testMethod();
