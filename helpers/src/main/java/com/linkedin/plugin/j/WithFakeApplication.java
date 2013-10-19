@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package com.linkedin.plugin;
+package com.linkedin.plugin.j;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -19,11 +19,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 
-import play.test.FakeApplication;
-
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface WithTestServer {
-  WithFakeApplication fakeApplication() default @WithFakeApplication;
-  int port() default 3333;
+public @interface WithFakeApplication {
+  String path() default ".";
 }
