@@ -19,7 +19,7 @@ object NGPluginBuild extends Build {
     settings = commonSettings ++ Seq(
       libraryDependencies ++= Seq(
         "org.testng" % "testng" % "6.8.5", // % "provided"
-        "com.typesafe.play" %% "play-test" % "2013.10.16-master-56bcfdd" //% "provided"
+        "com.typesafe.play" %% "play-test" % "2.2.0" //% "provided"
       )))
 
   lazy val NGPlugin = Project(
