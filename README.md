@@ -1,6 +1,6 @@
-# Test ng plugin
+# TestNG plugin
 
-This plugin is a TestNG runner for [Playframework 2.0](http://www.playframework.org/).
+This plugin is a TestNG runner for [Play Framework 2.2.0](http://www.playframework.org/).
 It using the [TestNG sbt interface by jmhofer](https://bitbucket.org/jmhofer/sbt-testng-interface) to run TestNG Test suites, and adds Helpers.
 Example can be found in the `sample` folder.
 
@@ -13,7 +13,7 @@ Example can be found in the `sample` folder.
 Add the plugin in your `project/plugins.sbt` file.
 
 ```scala
-addSbtPlugin("com.linkedin" % "play-plugins-testng" % "1.0-SNAPSHOT")
+addSbtPlugin("com.linkedin" % "play-plugins-testng" % "2.2.1")
 ```
 
 #### Helpers
@@ -22,11 +22,12 @@ Add the dependency in your `project/Build.scala` file.
 
 ```scala
 val appDependencies = Seq(
- "com.linkedin" %% "play-testng-helpers" % "1.0-SNAPSHOT"
+ "com.linkedin" %% "play-testng-helpers" % "2.2.1"
 )
 ```
 
 ***Test classes must extend NGTests to use the helpers.***
+***Use `com.linkedin.plugin.j.*` in Java code and `com.linkedin.plugin.s.*` from Scala code.***
 
 ### Annotations
 
@@ -181,7 +182,7 @@ Using `@WithPlugins`, you can replace or add plugin to the FakeApplication ran f
 
 Like `@WithFakeApplication`, `@WithPlugins` can be used on classes.
 
-## Licence
+## License
 
 Copyright 2012 LinkedIn
 

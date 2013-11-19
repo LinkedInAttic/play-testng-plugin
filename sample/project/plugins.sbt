@@ -5,6 +5,6 @@ logLevel := Level.Warn
 resolvers += "Typesafe Releases Repository" at "http://repo.typesafe.com/typesafe/releases/"
 
 // Use the Play sbt plugin for Play projects
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.2.0")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.2.1")
 
-addSbtPlugin("com.linkedin" % "play-plugins-testng" % "2.2.0")
+addSbtPlugin("com.linkedin" % "play-plugins-testng" % "2.2.1")
