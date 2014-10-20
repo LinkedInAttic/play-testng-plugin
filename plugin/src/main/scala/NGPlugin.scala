@@ -20,8 +20,6 @@ import de.johoop.testngplugin.TestNGPlugin._
 
 object NGPlugin extends Plugin {
 
-  override def settings: Seq[Setting[_]] = ngSettings
-
   def ngSettings: Seq[Setting[_]] = super.settings ++ Seq(
     testOptions in Test := Seq(),
     testOptions in Test += Tests.Setup { loader =>
