@@ -8,6 +8,7 @@ import play.libs.F.*;
 import static play.test.Helpers.*;
 
 import com.linkedin.plugin.*;
+import com.linkedin.plugin.j.*;
 
 public class SimpleTest extends NGTests {
     

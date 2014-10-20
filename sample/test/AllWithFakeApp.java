@@ -1,4 +1,3 @@
-import com.linkedin.plugin.j.WithFakeApplication;
 import org.testng.annotations.*;
 
 import play.mvc.*;
@@ -8,6 +7,7 @@ import play.libs.F.*;
 import static play.test.Helpers.*;
 
 import com.linkedin.plugin.*;
+import com.linkedin.plugin.j.*;
 
 @WithFakeApplication(path=".")
 @Confs({

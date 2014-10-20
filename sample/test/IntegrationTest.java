@@ -10,6 +10,7 @@ import static org.fest.assertions.Assertions.*;
 import static org.fluentlenium.core.filter.FilterConstructor.*;
 
 import com.linkedin.plugin.*;
+import com.linkedin.plugin.j.*;
 
 @WithTestServer
 public class IntegrationTest extends NGTests { 
