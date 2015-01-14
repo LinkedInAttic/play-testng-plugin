@@ -22,6 +22,7 @@ import play.api.test.FakeApplication;
 import play.api.test.Helpers;
 import play.api.test.TestBrowser;
 import play.api.test.TestServer;
+import play.core.server.NettyServer;
 import play.libs.Scala;
 import scala.PartialFunction$;
 import scala.Tuple2;
@@ -64,7 +65,7 @@ public class NGTests extends NGTestsBase implements IHookable {
 
     private TestServer buildTestServer(WithTestServer ts) {
       FakeApplication fake = buildFakeApplication(ts.fakeApplication());
-      return new TestServer(ts.port(), fake, scala.Option.apply(null));
+      return new TestServer(ts.port(), fake, scala.Option.apply(null), NettyServer.defaultServerProvider());
     }
   }
 

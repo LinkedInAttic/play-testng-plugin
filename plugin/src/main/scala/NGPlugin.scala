@@ -42,7 +42,7 @@ object NGPlugin extends Plugin {
        libraryDependencies <++= (testNGVersion in Test)(v => Seq(
          "org.testng" % "testng" % v % "test->default",
          // If changing this, be sure to change in Build.scala also.
-         "de.johoop" %% "sbt-testng-interface" % "3.0.0" % "test"))
+         "de.johoop" %% "sbt-testng-interface" % "3.0.2" % "test"))
   )
 
   private def playLoggerClass(loader: ClassLoader) = {

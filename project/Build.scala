@@ -19,7 +19,7 @@ object NGPluginBuild extends Build {
     settings = commonSettings ++ Seq(
       libraryDependencies ++= Seq(
         "org.testng" % "testng" % "6.8.5", // % "provided"
-        "com.typesafe.play" %% "play-test" % "2.2.3" //% "provided"
+        "com.typesafe.play" %% "play-test" % "2.4.0-M1" //% "provided"
       )))
 
   lazy val NGPlugin = Project(
@@ -30,14 +30,16 @@ object NGPluginBuild extends Build {
       libraryDependencies <++= (scalaVersion, sbtVersion) {
         case (scalaVersion, sbtVersion) => Seq(
           // If changing this, be sure to change in NGPlugin.scala also.
-          sbtPluginExtra("de.johoop" % "sbt-testng-plugin" % "3.0.0", "0.13", "2.10"),
-          "de.johoop" %% "sbt-testng-interface" % "3.0.0"
+          sbtPluginExtra("de.johoop" % "sbt-testng-plugin" % "3.0.2", "0.13", "2.10"),
+          "de.johoop" %% "sbt-testng-interface" % "3.0.2"
         )
       }))
 
   lazy val commonSettings: Seq[Setting[_]] = Project.defaultSettings ++ Seq(
     organization := "com.linkedin",
-    scalaVersion := "2.10.1",
-    version := "2.2.3",
-    resolvers ++= Seq(Repos.typeSafeReleases))
+    scalaVersion := "2.10.3",
+    version := "2.4.0",
+    resolvers ++= Seq(Repos.typeSafeReleases)
+
+  )
 }

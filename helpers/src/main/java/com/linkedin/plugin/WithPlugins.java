@@ -19,6 +19,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 
+// TODO: deprecate or delete this when we figure out dependency injection?
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WithPlugins {
