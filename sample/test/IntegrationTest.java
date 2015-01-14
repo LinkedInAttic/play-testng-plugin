@@ -5,7 +5,7 @@ import play.test.*;
 import play.libs.F.*;
 
 import static play.test.Helpers.*;
-import static org.fest.assertions.Assertions.*;
+import static org.testng.AssertJUnit.*;
 
 import static org.fluentlenium.core.filter.FilterConstructor.*;
 
@@ -18,6 +18,6 @@ public class IntegrationTest extends NGTests {
     @WithTestServer
     public void test() {
       browser().goTo("http://localhost:3333");
-      assertThat(browser().pageSource()).contains("Helloworld");
+      assertTrue(browser().pageSource().contains("Helloworld"));
     }
 }
