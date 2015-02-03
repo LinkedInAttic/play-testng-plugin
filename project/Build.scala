@@ -6,6 +6,7 @@ object NGPluginBuild extends Build {
 
   object Repos {
     val typeSafeReleases = "Typesafe Releases Repository" at "http://repo.typesafe.com/typesafe/releases/"
+    val scalazReleases = "Scalaz Repository" at "http://dl.bintray.com/scalaz/releases"
   }
 
   lazy val root = Project("root", file("."),
@@ -19,7 +20,7 @@ object NGPluginBuild extends Build {
     settings = commonSettings ++ Seq(
       libraryDependencies ++= Seq(
         "org.testng" % "testng" % "6.8.5", // % "provided"
-        "com.typesafe.play" %% "play-test" % "2.4.0-M1" //% "provided"
+        "com.typesafe.play" %% "play-test" % "2.4.0-M2" //% "provided"
       )))
 
   lazy val NGPlugin = Project(
@@ -39,7 +40,7 @@ object NGPluginBuild extends Build {
     organization := "com.linkedin",
     scalaVersion := "2.10.3",
     version := "2.4.0",
-    resolvers ++= Seq(Repos.typeSafeReleases)
+    resolvers ++= Seq(Repos.typeSafeReleases, Repos.scalazReleases)
 
   )
 }
