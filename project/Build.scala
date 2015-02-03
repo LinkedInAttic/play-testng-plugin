@@ -18,7 +18,7 @@ object NGPluginBuild extends Build {
     base = file("helpers"),
     settings = commonSettings ++ Seq(
       libraryDependencies ++= Seq(
-        "org.testng" % "testng" % "6.8.8", // % "provided"
+        "org.testng" % "testng" % "6.8.5", // % "provided"
         "com.typesafe.play" %% "play-test" % "2.4.0-M1" //% "provided"
       )))
 
@@ -39,11 +39,11 @@ object NGPluginBuild extends Build {
     organization := "com.linkedin",
     scalaVersion := "2.10.3",
     version := "2.4.0",
-    resolvers ++= Seq(Repos.typeSafeReleases),
-    publishTo := Some(Resolver.file("local", new File("/home/rli/local-repo"))(Patterns(
-                  ivyPatterns = Seq("[orgPath]/[module]/[revision]/[module]-[revision].ivy"),
-                  artifactPatterns = Seq("[orgPath]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"),
-                  isMavenCompatible = true)))
+    resolvers ++= Seq(Repos.typeSafeReleases)
+    // publishTo := Some(Resolver.file("local", new File("/home/rli/local-repo"))(Patterns(
+    //               ivyPatterns = Seq("[orgPath]/[module]/[revision]/[module]-[revision].ivy"),
+    //               artifactPatterns = Seq("[orgPath]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"),
+    //               isMavenCompatible = true)))
 
   )
 }
