@@ -41,6 +41,9 @@ object NGPluginBuild extends Build {
     scalaVersion := "2.10.3",
     version := "2.4.0",
     resolvers ++= Seq(Repos.typeSafeReleases, Repos.scalazReleases)
-
+    // publishTo := Some(Resolver.file("local", new File("/home/rli/local-repo"))(Patterns(
+    //               ivyPatterns = Seq("[orgPath]/[module]/[revision]/[module]-[revision].ivy"),
+    //               artifactPatterns = Seq("[orgPath]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"),
+    //               isMavenCompatible = true)))
   )
 }

@@ -2,9 +2,6 @@ import sbt._
 import Keys._
 import play._
 
-import com.linkedin.plugin.NGPlugin
-import com.linkedin.plugin.NGPlugin._
-
 object ApplicationBuild extends Build {
 
     val appName         = "Sample"
@@ -18,6 +15,4 @@ object ApplicationBuild extends Build {
       .enablePlugins(PlayJava)
       .settings(version := appVersion)
       .settings(libraryDependencies ++= appDependencies)
-      //.configs(NGTest)
-      .settings(NGPlugin.ngSettings: _*)
 }
