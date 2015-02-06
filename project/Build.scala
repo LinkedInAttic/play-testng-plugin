@@ -41,6 +41,5 @@ object NGPluginBuild extends Build {
     scalaVersion := "2.10.4",
     version := "2.4.0",
     resolvers ++= Seq(Repos.typeSafeReleases, Repos.scalazReleases)
-
   )
 }
