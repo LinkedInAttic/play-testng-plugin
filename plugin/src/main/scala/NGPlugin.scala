@@ -37,7 +37,7 @@ object NGPlugin extends Plugin {
     //testOptions in Test += Tests.Argument(TestFrameworks.Specs2, "sequential", "true"),
     testOptions in Test += Tests.Argument(TestFrameworks.JUnit,"junitxml", "console")
    ) ++
-   inConfig(Test)(testNGSettings) ++
+   testNGSettings ++
    Seq(
        libraryDependencies <++= (testNGVersion in Test)(v => Seq(
          "org.testng" % "testng" % v % "test->default",
