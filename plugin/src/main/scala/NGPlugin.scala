@@ -21,8 +21,8 @@ import de.johoop.testngplugin.TestNGPlugin._
 object NGPlugin extends Plugin {
 
   override def projectSettings: Seq[Setting[_]] = Seq(
-    testOptions in Test := Seq(),
-    testOptions in Test += Tests.Setup { loader =>
+    testOptions := Seq(),
+    testOptions += Tests.Setup { loader =>
       val loggerClass = playLoggerClass(loader)
       if (loggerClass != null) {
         loggerClass.getMethod("init", classOf[java.io.File]).invoke(null, new java.io.File("."))
