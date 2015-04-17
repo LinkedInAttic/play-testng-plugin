@@ -21,25 +21,25 @@ import de.johoop.testngplugin.TestNGPlugin._
 object NGPlugin extends Plugin {
 
   override def projectSettings: Seq[Setting[_]] = Seq(
-    testOptions in Test := Seq(),
-    testOptions in Test += Tests.Setup { loader =>
+    testOptions := Seq(),
+    testOptions += Tests.Setup { loader =>
       val loggerClass = playLoggerClass(loader)
       if (loggerClass != null) {
         loggerClass.getMethod("init", classOf[java.io.File]).invoke(null, new java.io.File("."))
       }
     },
-    testOptions in Test += Tests.Cleanup { loader =>
+    testOptions += Tests.Cleanup { loader =>
       val loggerClass = playLoggerClass(loader)
       if (loggerClass != null) {
         loggerClass.getMethod("shutdown").invoke(null)
       }
     },
-    //testOptions in Test += Tests.Argument(TestFrameworks.Specs2, "sequential", "true"),
-    testOptions in Test += Tests.Argument(TestFrameworks.JUnit,"junitxml", "console")
+    //testOptions += Tests.Argument(TestFrameworks.Specs2, "sequential", "true"),
+    testOptions += Tests.Argument(TestFrameworks.JUnit,"junitxml", "console")
    ) ++
-   inConfig(Test)(testNGSettings) ++
+   testNGSettings ++
    Seq(
-       libraryDependencies <++= (testNGVersion in Test)(v => Seq(
+       libraryDependencies <++= (testNGVersion)(v => Seq(
          "org.testng" % "testng" % v % "test->default",
          // If changing this, be sure to change in Build.scala also.
          "de.johoop" %% "sbt-testng-interface" % "3.0.2" % "test"))
