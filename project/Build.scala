@@ -19,7 +19,7 @@ object NGPluginBuild extends Build {
     base = file("helpers"),
     settings = commonSettings ++ Seq(
       libraryDependencies ++= Seq(
-        "org.testng" % "testng" % "6.8.5", // % "provided"
+        "org.testng" % "testng" % "6.8.8", // % "provided"
         "com.typesafe.play" %% "play-test" % "2.4.0-RC1" //% "provided"
       )))
 
