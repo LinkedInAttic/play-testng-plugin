@@ -23,4 +23,5 @@ import java.lang.annotation.ElementType;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WithFakeApplication {
   String path() default ".";
+  Class withGlobal() default Object.class;
 }

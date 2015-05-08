@@ -47,15 +47,23 @@ public class NGTests extends NGTestsBase implements IHookable {
     private FakeApplication buildFakeApplication(WithFakeApplication fa) {
       if (fa != null) {
         String path = fa.path();
+        Object globalSettings = null;
+        if (fa.withGlobal() != Object.class) {
+          try {
+            globalSettings = fa.withGlobal().newInstance();
+          } catch (Throwable e) {
+            throw new RuntimeException(e);
+          }
+        }
 
         // adapted from play.test.FakeApplication
         return new FakeApplication(
-          new File(path),
+          new File(fa.path()),
           Helpers.class.getClassLoader(),
           Scala.toSeq(getPlugins()),
           Scala.toSeq(Collections.<String>emptyList()),
           Scala.asScala(getConf()),
-          scala.Option.apply((play.api.GlobalSettings) null),
+          scala.Option.apply((play.api.GlobalSettings) globalSettings),
           PartialFunction$.MODULE$.<Tuple2<String, String>, Handler>empty()
         );
       }
