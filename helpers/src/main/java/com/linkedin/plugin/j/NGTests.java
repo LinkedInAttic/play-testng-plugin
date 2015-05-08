@@ -42,7 +42,7 @@ public class NGTests extends NGTestsBase implements IHookable {
       if (fa != null) {
         String path = fa.path();
         Object globalSettings = null;
-        if (fa.withGlobal() != Object.class) {
+        if (! Object.class.equals(fa.withGlobal())) {
           try {
             globalSettings = fa.withGlobal().newInstance();
           } catch (Throwable e) {

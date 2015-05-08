@@ -48,7 +48,7 @@ public class NGTests extends NGTestsBase implements IHookable {
       if (fa != null) {
         String path = fa.path();
         Object globalSettings = null;
-        if (fa.withGlobal() != Object.class) {
+        if (! Object.class.equals(fa.withGlobal())) {
           try {
             globalSettings = fa.withGlobal().newInstance();
           } catch (Throwable e) {
@@ -58,7 +58,7 @@ public class NGTests extends NGTestsBase implements IHookable {
 
         // adapted from play.test.FakeApplication
         return new FakeApplication(
-          new File(fa.path()),
+          new File(path),
           Helpers.class.getClassLoader(),
           Scala.toSeq(getPlugins()),
           Scala.toSeq(Collections.<String>emptyList()),
