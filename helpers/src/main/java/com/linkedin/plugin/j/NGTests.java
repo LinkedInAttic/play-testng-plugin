@@ -41,8 +41,15 @@ public class NGTests extends NGTestsBase implements IHookable {
     private FakeApplication buildFakeApplication(WithFakeApplication fa) {
       if (fa != null) {
         String path = fa.path();
-
-        return new FakeApplication(new File(path), Helpers.class.getClassLoader(), getConf(), getPlugins(), null);
+        Object globalSettings = null;
+        if (fa.withGlobal() != Object.class) {
+          try {
+            globalSettings = fa.withGlobal().newInstance();
+          } catch (Throwable e) {
+            throw new RuntimeException(e);
+          }
+        }
+        return new FakeApplication(new File(path), Helpers.class.getClassLoader(), getConf(), getPlugins(), (play.GlobalSettings) globalSettings);
       }
       return null;
     }
