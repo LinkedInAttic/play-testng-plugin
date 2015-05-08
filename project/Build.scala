@@ -19,7 +19,7 @@ object NGPluginBuild extends Build {
     settings = commonSettings ++ Seq(
       libraryDependencies ++= Seq(
         "org.testng" % "testng" % "6.8.5", // % "provided"
-        "com.typesafe.play" %% "play-test" % "2.2.3" //% "provided"
+        "com.typesafe.play" %% "play-test" % "2.2.4" //% "provided"
       )))
 
   lazy val NGPlugin = Project(
@@ -37,7 +37,7 @@ object NGPluginBuild extends Build {
 
   lazy val commonSettings: Seq[Setting[_]] = Project.defaultSettings ++ Seq(
     organization := "com.linkedin",
-    scalaVersion := "2.10.1",
+    scalaVersion := "2.10.4",
     version := "2.2.4",
     resolvers ++= Seq(Repos.typeSafeReleases))
 }
