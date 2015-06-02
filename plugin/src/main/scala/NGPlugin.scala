@@ -20,7 +20,7 @@ import de.johoop.testngplugin.TestNGPlugin._
 
 object NGPlugin extends Plugin {
 
-  override def projectSettings: Seq[Setting[_]] = Seq(
+  def ngSettings: Seq[Setting[_]] = super.settings ++ Seq(
     testOptions := Seq(),
     testOptions += Tests.Setup { loader =>
       val loggerClass = playLoggerClass(loader)
