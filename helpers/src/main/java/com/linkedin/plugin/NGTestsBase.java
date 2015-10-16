@@ -15,10 +15,23 @@ package com.linkedin.plugin;
 
 import org.testng.IHookable;
 import org.testng.ITestResult;
+import play.api.inject.Binding;
+import play.api.inject.BindingKey;
+import play.api.inject.package$;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.stream.Stream.concat;
 
 public abstract class NGTestsBase implements IHookable {
 
@@ -102,6 +115,49 @@ public abstract class NGTestsBase implements IHookable {
         plugins.addAll(Arrays.asList(methodPlugins.value()));
 
       return plugins;
+    }
+
+    protected boolean isDefined(Class clz) {
+      return !Object.class.equals(clz);
+    }
+
+
+    private Stream<Binding<?>> toStream(WithOverrides overrides) {
+      return Optional.ofNullable(overrides).map(o -> Arrays.stream(o.value()).map(this::toBinding)).orElse(Stream.empty());
+    }
+
+    private Stream<Binding<?>> toStream(BindingOverride override) {
+      return Optional.ofNullable(override).map(o -> Stream.<Binding<?>>of(toBinding(o))).orElse(Stream.<Binding<?>>empty());
+    }
+
+    private Binding<?> toBinding(BindingOverride override) {
+      BindingKey bindingKey = package$.MODULE$.bind(override.target());
+      if (! Object.class.equals(override.annotationQualifier())) {
+        bindingKey = bindingKey.qualifiedWith(override.annotationQualifier());
+      }
+      if (!"".equals(override.stringQualifier())) {
+        bindingKey = bindingKey.qualifiedWith(override.stringQualifier());
+      }
+      return bindingKey.to(override.implementation());
+    }
+
+    protected List<Binding<?>> getOverrides() {
+      if (getFakeAppAnnotation() == null) {
+        return Collections.emptyList();
+      }
+
+      Class clazz = testClass();
+      Method m = testMethod();
+
+      Stream<Binding<?>> bindings = concat(
+          concat(
+              concat(toStream((WithOverrides) clazz.getAnnotation(WithOverrides.class)),
+                     toStream((BindingOverride) clazz.getAnnotation(BindingOverride.class))),
+                     toStream(m.getAnnotation(WithOverrides.class))),
+                     toStream(m.getAnnotation(BindingOverride.class))
+      );
+
+      return bindings.collect(Collectors.toList());
     }
 
     private Method testMethod() {

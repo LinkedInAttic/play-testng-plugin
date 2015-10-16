@@ -17,13 +17,21 @@ import com.linkedin.plugin.NGTestsBase;
 import org.testng.IHookCallBack;
 import org.testng.IHookable;
 import org.testng.ITestResult;
-import play.libs.F;
+import play.Application;
+import play.Environment;
+import play.GlobalSettings;
+import play.Mode;
+import play.api.inject.Binding;
+import play.api.inject.package$;
+import play.inject.guice.GuiceApplicationBuilder;
+import play.inject.guice.GuiceBuilder;
 import play.test.FakeApplication;
 import play.test.Helpers;
 import play.test.TestBrowser;
 import play.test.TestServer;
 
 import java.io.File;
+import java.util.List;
 
 import static play.test.Helpers.HTMLUNIT;
 
@@ -38,24 +46,58 @@ public class NGTests extends NGTestsBase implements IHookable {
       super(testResult, WithFakeApplication.class, WithTestServer.class);
     }
 
-    private FakeApplication buildFakeApplication(WithFakeApplication fa) {
-      if (fa != null) {
-        String path = fa.path();
-        Object globalSettings = null;
-        if (! Object.class.equals(fa.withGlobal())) {
-          try {
-            globalSettings = fa.withGlobal().newInstance();
-          } catch (Throwable e) {
-            throw new RuntimeException(e);
-          }
-        }
-        return new FakeApplication(new File(path), Helpers.class.getClassLoader(), getConf(), getPlugins(), (play.GlobalSettings) globalSettings);
+    private Application buildFakeApplication(WithFakeApplication fa) {
+      if (fa == null) {
+        return null;
       }
-      return null;
+      String path = fa.path();
+      GlobalSettings globalSettings = null;
+      if (isDefined(fa.withGlobal())) {
+        try {
+          globalSettings = (GlobalSettings) fa.withGlobal().newInstance();
+        } catch (Throwable e) {
+          throw new RuntimeException(e);
+        }
+      }
+      List<Binding<?>> overrides = getOverrides();
+      if (isDefined(fa.guiceBuilder()) || !overrides.isEmpty()) {
+        Class builderClass = Object.class.equals(fa.guiceBuilder()) ? GuiceApplicationBuilder.class : fa.guiceBuilder();
+        return buildFromBuilder(new File(path), globalSettings, builderClass, overrides);
+      }
+
+      return new FakeApplication(new File(path), Helpers.class.getClassLoader(), getConf(), getPlugins(), globalSettings);
+    }
+
+    /**
+     * Build from a 2.4 Builder instead of using FakeApplication
+     */
+    private Application buildFromBuilder(File path, GlobalSettings globalSettings, Class<?> builderClass, List<Binding<?>> overrides) {
+      GuiceBuilder builder;
+      try {
+        builder = (GuiceBuilder) builderClass.newInstance();
+      } catch (Exception e) {
+        throw new RuntimeException("Unable to instantiate application builder " + builderClass, e);
+      }
+      if (!getPlugins().isEmpty()) {
+        throw new RuntimeException("Using plugins isn't supported when using binding overrides or a GuiceBuilder.");
+      }
+
+      builder = (GuiceBuilder) builder.in(new Environment(path, Helpers.class.getClassLoader(), Mode.TEST));
+      builder = (GuiceBuilder) builder.configure(getConf());
+      if (globalSettings != null) {
+        if (builder instanceof GuiceApplicationBuilder) {
+          builder = ((GuiceApplicationBuilder) builder).global(globalSettings);
+        } else {
+          play.api.GlobalSettings scalaGlobal = new play.core.j.JavaGlobalSettingsAdapter(globalSettings);
+          builder = (GuiceBuilder) builder.bindings(package$.MODULE$.bind(play.api.GlobalSettings.class).toInstance(scalaGlobal));
+        }
+      }
+      builder = (GuiceBuilder) builder.overrides(overrides.toArray(new Binding[overrides.size()]));
+      return builder.injector().instanceOf(Application.class);
     }
 
     private TestServer buildTestServer(WithTestServer ts) {
-      FakeApplication fake = buildFakeApplication(ts.fakeApplication());
+      Application fake = buildFakeApplication(ts.fakeApplication());
       return Helpers.testServer(ts.port(), fake);
     }
   }
@@ -81,12 +123,9 @@ public class NGTests extends NGTestsBase implements IHookable {
 
     if (fa != null)
     {
-      FakeApplication app = reader.buildFakeApplication(fa);
-      Helpers.running(app, new Runnable() {
-        @Override
-        public void run() {
-          icb.runTestMethod(testResult);
-        }
+      Application app = reader.buildFakeApplication(fa);
+      Helpers.running(app, () -> {
+        icb.runTestMethod(testResult);
       });
 
     }
@@ -94,11 +133,9 @@ public class NGTests extends NGTestsBase implements IHookable {
     {
       TestServer server = reader.buildTestServer(ts);
       // TODO: parameterize WebDriver
-      Helpers.running(server, HTMLUNIT, new F.Callback<TestBrowser>() {
-        public void invoke(final TestBrowser browser) {
-          _testBrowser = browser;
-          icb.runTestMethod(testResult);
-        }
+      Helpers.running(server, HTMLUNIT, browser -> {
+        _testBrowser = browser;
+        icb.runTestMethod(testResult);
       });
     }
     else

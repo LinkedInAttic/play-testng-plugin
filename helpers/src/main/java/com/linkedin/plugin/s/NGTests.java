@@ -17,13 +17,19 @@ import com.linkedin.plugin.NGTestsBase;
 import org.testng.IHookCallBack;
 import org.testng.IHookable;
 import org.testng.ITestResult;
+import play.api.Environment;
+import play.api.Mode;
+import play.api.Application;
+import play.api.GlobalSettings;
+import play.api.inject.Binding;
+import play.api.inject.guice.GuiceApplicationBuilder;
+import play.api.inject.guice.GuiceBuilder;
+import play.api.inject.package$;
 import play.api.mvc.Handler;
 import play.api.test.FakeApplication;
 import play.api.test.Helpers;
 import play.api.test.TestBrowser;
 import play.api.test.TestServer;
-import play.core.server.NettyServer;
-import play.core.server.ServerProvider;
 import play.libs.Scala;
 import scala.PartialFunction$;
 import scala.Tuple2;
@@ -32,6 +38,7 @@ import scala.runtime.AbstractFunction1;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.List;
 
 import static play.test.Helpers.HTMLUNIT;
 
@@ -46,34 +53,63 @@ public class NGTests extends NGTestsBase implements IHookable {
       super(testResult, WithFakeApplication.class, WithTestServer.class);
     }
 
-    private FakeApplication buildFakeApplication(WithFakeApplication fa) {
-      if (fa != null) {
-        String path = fa.path();
-        Object globalSettings = null;
-        if (! Object.class.equals(fa.withGlobal())) {
-          try {
-            globalSettings = fa.withGlobal().newInstance();
-          } catch (Throwable e) {
-            throw new RuntimeException(e);
-          }
-        }
-
-        // adapted from play.test.FakeApplication
-        return new FakeApplication(
-          new File(path),
-          Helpers.class.getClassLoader(),
-          Scala.toSeq(getPlugins()),
-          Scala.toSeq(Collections.<String>emptyList()),
-          Scala.asScala(getConf()),
-          scala.Option.apply((play.api.GlobalSettings) globalSettings),
-          PartialFunction$.MODULE$.<Tuple2<String, String>, Handler>empty()
-        );
+    private Application buildFakeApplication(WithFakeApplication fa) {
+      if (fa == null) {
+        return null;
       }
-      return null;
+      String path = fa.path();
+      GlobalSettings globalSettings = null;
+      if (isDefined(fa.withGlobal())) {
+        try {
+          globalSettings = (GlobalSettings) fa.withGlobal().newInstance();
+        } catch (Throwable e) {
+          throw new RuntimeException(e);
+        }
+      }
+
+      List<Binding<?>> overrides = getOverrides();
+      if (isDefined(fa.guiceBuilder()) || !overrides.isEmpty()) {
+        Class builderClass = Object.class.equals(fa.guiceBuilder()) ? GuiceApplicationBuilder.class : fa.guiceBuilder();
+        return buildFromBuilder(new File(path), globalSettings, builderClass, overrides);
+      }
+
+      // adapted from play.test.FakeApplication
+      return new FakeApplication(
+        new File(path),
+        Helpers.class.getClassLoader(),
+        Scala.toSeq(getPlugins()),
+        Scala.toSeq(Collections.<String>emptyList()),
+        Scala.asScala(getConf()),
+        scala.Option.apply(globalSettings),
+        PartialFunction$.MODULE$.<Tuple2<String, String>, Handler>empty()
+      );
+    }
+
+    private Application buildFromBuilder(File path, GlobalSettings globalSettings, Class builderClass, List<Binding<?>> overrides) {
+      GuiceBuilder builder;
+      try {
+        builder = (GuiceBuilder) builderClass.newInstance();
+      } catch (Exception e) {
+        throw new RuntimeException("Unable to instantiate application builder " + builderClass, e);
+      }
+      if (!getPlugins().isEmpty()) {
+        throw new RuntimeException("Using plugins isn't supported when using binding overrides or a GuiceBuilder.");
+      }
+      builder = (GuiceBuilder) builder.in(new Environment(path, play.test.Helpers.class.getClassLoader(), Mode.Test()));
+      builder = (GuiceBuilder) builder.configure(Scala.asScala(getConf()));
+      if (globalSettings != null) {
+        if (builder instanceof GuiceApplicationBuilder) {
+          builder = ((GuiceApplicationBuilder) builder).global(globalSettings);
+        } else {
+          builder = (GuiceBuilder) builder.bindings(Scala.varargs(package$.MODULE$.bind(play.api.GlobalSettings.class).toInstance(globalSettings)));
+        }
+      }
+      builder = (GuiceBuilder) builder.overrides(Scala.asScala(overrides));
+      return builder.injector().instanceOf(Application.class);
     }
 
     private TestServer buildTestServer(WithTestServer ts) {
-      FakeApplication fake = buildFakeApplication(ts.fakeApplication());
+      Application fake = buildFakeApplication(ts.fakeApplication());
       return new TestServer(ts.port(), fake, scala.Option.apply(null), scala.Option.apply(null));
     }
   }
@@ -99,7 +135,7 @@ public class NGTests extends NGTestsBase implements IHookable {
 
     if (fa != null)
     {
-      FakeApplication app = reader.buildFakeApplication(fa);
+      Application app = reader.buildFakeApplication(fa);
       Helpers.running(app, new AbstractFunction0() {
         @Override
         public Object apply() {
