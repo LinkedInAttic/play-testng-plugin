@@ -18,20 +18,14 @@ import org.testng.IHookCallBack;
 import org.testng.IHookable;
 import org.testng.ITestResult;
 import play.Application;
-import play.Environment;
 import play.GlobalSettings;
-import play.Mode;
-import play.api.inject.Binding;
-import play.api.inject.package$;
-import play.inject.guice.GuiceApplicationBuilder;
 import play.inject.guice.GuiceBuilder;
-import play.test.FakeApplication;
 import play.test.Helpers;
 import play.test.TestBrowser;
 import play.test.TestServer;
 
 import java.io.File;
-import java.util.List;
+import java.util.Optional;
 
 import static play.test.Helpers.HTMLUNIT;
 
@@ -50,51 +44,19 @@ public class NGTests extends NGTestsBase implements IHookable {
       if (fa == null) {
         return null;
       }
-      String path = fa.path();
-      GlobalSettings globalSettings = null;
-      if (isDefined(fa.withGlobal())) {
-        try {
-          globalSettings = (GlobalSettings) fa.withGlobal().newInstance();
-        } catch (Throwable e) {
-          throw new RuntimeException(e);
-        }
-      }
-      List<Binding<?>> overrides = getOverrides();
-      if (isDefined(fa.guiceBuilder()) || !overrides.isEmpty()) {
-        Class builderClass = Object.class.equals(fa.guiceBuilder()) ? GuiceApplicationBuilder.class : fa.guiceBuilder();
-        return buildFromBuilder(new File(path), globalSettings, builderClass, overrides);
-      }
+      FakeApplicationFactory appFactory = instantiate(fa.appFactory());
 
-      return new FakeApplication(new File(path), Helpers.class.getClassLoader(), getConf(), getPlugins(), globalSettings);
+      return appFactory.buildApplication(new FakeApplicationFactoryArgs(
+          new File(fa.path()),
+          isDefined(fa.guiceBuilder()) ? Optional.of(fa.guiceBuilder()) : Optional.<Class<? extends GuiceBuilder>>empty(),
+          isDefined(fa.withGlobal()) ? Optional.of(instantiate(fa.withGlobal())) : Optional.<GlobalSettings>empty(),
+          getOverrides(),
+          getConf(),
+          getPlugins()
+      ));
     }
 
-    /**
-     * Build from a 2.4 Builder instead of using FakeApplication
-     */
-    private Application buildFromBuilder(File path, GlobalSettings globalSettings, Class<?> builderClass, List<Binding<?>> overrides) {
-      GuiceBuilder builder;
-      try {
-        builder = (GuiceBuilder) builderClass.newInstance();
-      } catch (Exception e) {
-        throw new RuntimeException("Unable to instantiate application builder " + builderClass, e);
-      }
-      if (!getPlugins().isEmpty()) {
-        throw new RuntimeException("Using plugins isn't supported when using binding overrides or a GuiceBuilder.");
-      }
 
-      builder = (GuiceBuilder) builder.in(new Environment(path, Helpers.class.getClassLoader(), Mode.TEST));
-      builder = (GuiceBuilder) builder.configure(getConf());
-      if (globalSettings != null) {
-        if (builder instanceof GuiceApplicationBuilder) {
-          builder = ((GuiceApplicationBuilder) builder).global(globalSettings);
-        } else {
-          play.api.GlobalSettings scalaGlobal = new play.core.j.JavaGlobalSettingsAdapter(globalSettings);
-          builder = (GuiceBuilder) builder.bindings(package$.MODULE$.bind(play.api.GlobalSettings.class).toInstance(scalaGlobal));
-        }
-      }
-      builder = (GuiceBuilder) builder.overrides(overrides.toArray(new Binding[overrides.size()]));
-      return builder.injector().instanceOf(Application.class);
-    }
 
     private TestServer buildTestServer(WithTestServer ts) {
       Application fake = buildFakeApplication(ts.fakeApplication());

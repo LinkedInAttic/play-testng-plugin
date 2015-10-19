@@ -24,4 +24,5 @@ public @interface WithFakeApplication {
   String path() default ".";
   Class withGlobal() default Object.class;
   Class guiceBuilder() default Object.class;
+  Class<? extends FakeApplicationFactory> appFactory() default FakeApplicationFactoryImpl.class;
 }

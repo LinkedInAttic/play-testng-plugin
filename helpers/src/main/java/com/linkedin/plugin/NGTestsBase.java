@@ -118,9 +118,16 @@ public abstract class NGTestsBase implements IHookable {
     }
 
     protected boolean isDefined(Class clz) {
-      return !Object.class.equals(clz);
+      return clz != null && !Object.class.equals(clz);
     }
 
+    protected <T> T instantiate(Class<?> clazz) {
+      try {
+        return (T) clazz.newInstance();
+      } catch (Exception e) {
+        throw new RuntimeException("Unable to instantiate class " + clazz);
+      }
+    }
 
     private Stream<Binding<?>> toStream(WithOverrides overrides) {
       return Optional.ofNullable(overrides).map(o -> Arrays.stream(o.value()).map(this::toBinding)).orElse(Stream.empty());
@@ -167,6 +174,7 @@ public abstract class NGTestsBase implements IHookable {
     private Class testClass() {
       return itr.getTestClass().getRealClass();
     }
+
 
   }
 }
