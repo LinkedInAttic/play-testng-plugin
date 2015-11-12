@@ -17,21 +17,17 @@ import com.linkedin.plugin.NGTestsBase;
 import org.testng.IHookCallBack;
 import org.testng.IHookable;
 import org.testng.ITestResult;
-import play.api.mvc.Handler;
-import play.api.test.FakeApplication;
+import play.api.Application;
+import play.api.GlobalSettings;
+import play.api.inject.guice.GuiceBuilder;
 import play.api.test.Helpers;
 import play.api.test.TestBrowser;
 import play.api.test.TestServer;
-import play.core.server.NettyServer;
-import play.core.server.ServerProvider;
-import play.libs.Scala;
-import scala.PartialFunction$;
-import scala.Tuple2;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.AbstractFunction1;
 
 import java.io.File;
-import java.util.Collections;
+import java.util.Optional;
 
 import static play.test.Helpers.HTMLUNIT;
 
@@ -46,34 +42,24 @@ public class NGTests extends NGTestsBase implements IHookable {
       super(testResult, WithFakeApplication.class, WithTestServer.class);
     }
 
-    private FakeApplication buildFakeApplication(WithFakeApplication fa) {
-      if (fa != null) {
-        String path = fa.path();
-        Object globalSettings = null;
-        if (! Object.class.equals(fa.withGlobal())) {
-          try {
-            globalSettings = fa.withGlobal().newInstance();
-          } catch (Throwable e) {
-            throw new RuntimeException(e);
-          }
-        }
-
-        // adapted from play.test.FakeApplication
-        return new FakeApplication(
-          new File(path),
-          Helpers.class.getClassLoader(),
-          Scala.toSeq(getPlugins()),
-          Scala.toSeq(Collections.<String>emptyList()),
-          Scala.asScala(getConf()),
-          scala.Option.apply((play.api.GlobalSettings) globalSettings),
-          PartialFunction$.MODULE$.<Tuple2<String, String>, Handler>empty()
-        );
+    private Application buildFakeApplication(WithFakeApplication fa) {
+      if (fa == null) {
+        return null;
       }
-      return null;
+
+      FakeApplicationFactory appFactory = instantiate(fa.appFactory());
+      return appFactory.buildScalaApplication(new FakeApplicationFactoryArgs(
+          new File(fa.path()),
+          isDefined(fa.guiceBuilder()) ? Optional.of(fa.guiceBuilder()) : Optional.<Class<? extends GuiceBuilder>>empty(),
+          isDefined(fa.withGlobal()) ? Optional.of(instantiate(fa.withGlobal())) : Optional.<GlobalSettings>empty(),
+          getOverrides(),
+          getConf(),
+          getPlugins()
+      ));
     }
 
     private TestServer buildTestServer(WithTestServer ts) {
-      FakeApplication fake = buildFakeApplication(ts.fakeApplication());
+      Application fake = buildFakeApplication(ts.fakeApplication());
       return new TestServer(ts.port(), fake, scala.Option.apply(null), scala.Option.apply(null));
     }
   }
@@ -99,7 +85,7 @@ public class NGTests extends NGTestsBase implements IHookable {
 
     if (fa != null)
     {
-      FakeApplication app = reader.buildFakeApplication(fa);
+      Application app = reader.buildFakeApplication(fa);
       Helpers.running(app, new AbstractFunction0() {
         @Override
         public Object apply() {

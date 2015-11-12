@@ -13,15 +13,16 @@
 // limitations under the License.
 package com.linkedin.plugin.s;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-
 import java.lang.annotation.Target;
-import java.lang.annotation.ElementType;
 
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WithFakeApplication {
   String path() default ".";
   Class withGlobal() default Object.class;
+  Class guiceBuilder() default Object.class;
+  Class<? extends FakeApplicationFactory> appFactory() default FakeApplicationFactoryImpl.class;
 }
