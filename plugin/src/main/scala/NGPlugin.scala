@@ -39,6 +39,7 @@ object NGPlugin extends Plugin {
    ) ++
    testNGSettings ++
    Seq(
+     testNGParameters ++= Seq("-listener", "com.linkedin.plugin.SkipTestListener"),
        libraryDependencies <++= (testNGVersion)(v => Seq(
          "org.testng" % "testng" % v % "test->default",
          // If changing this, be sure to change in Build.scala also.
