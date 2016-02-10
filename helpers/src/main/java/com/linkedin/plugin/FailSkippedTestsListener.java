@@ -8,7 +8,7 @@ import org.testng.TestListenerAdapter;
  *
  * This is a workaround for a bug in sbt testng plugin that skipped tests won't fail the entire test suite.
  */
-public class SkipTestListener extends TestListenerAdapter {
+public class FailSkippedTestsListener extends TestListenerAdapter {
 
   @Override
   public void onTestSkipped(ITestResult testResult) {
