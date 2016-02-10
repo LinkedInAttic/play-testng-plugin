@@ -40,7 +40,7 @@ object NGPluginBuild extends Build {
   lazy val commonSettings: Seq[Setting[_]] = Project.defaultSettings ++ Seq(
     organization := "com.linkedin.play-testng-plugin",
     scalaVersion := "2.10.4",
-    version := "2.4.1",
+    version := "2.4.2",
     resolvers ++= Seq(Repos.typeSafeReleases, Repos.scalazReleases)
   )
 }
