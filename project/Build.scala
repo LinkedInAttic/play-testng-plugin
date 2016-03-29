@@ -24,10 +24,10 @@ object NGPluginBuild extends Build {
     base = file("plugin"),
     settings = commonSettings ++ Seq(
       sbtPlugin := true,
-      libraryDependencies <++= (scalaVersion, sbtVersion) {
-        case (scalaVersion, sbtVersion) => Seq(
+      libraryDependencies <++= (scalaBinaryVersion in update, sbtBinaryVersion in update) {
+        case (scalaBinaryVersion, sbtBinaryVersion) => Seq(
           // If changing this, be sure to change in NGPlugin.scala also.
-          sbtPluginExtra("de.johoop" % "sbt-testng-plugin" % "3.0.2", "0.13", "2.10"),
+          sbtPluginExtra("de.johoop" % "sbt-testng-plugin" % "3.0.2", sbtBinaryVersion, scalaBinaryVersion),
           "de.johoop" %% "sbt-testng-interface" % "3.0.2"
         )
       }))
