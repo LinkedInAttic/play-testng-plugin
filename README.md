@@ -13,7 +13,7 @@ Example can be found in the `sample` folder.
 Add the plugin in your `project/plugins.sbt` file.
 
 ```scala
-addSbtPlugin("com.linkedin" % "play-plugins-testng" % "2.4.0")
+addSbtPlugin("com.linkedin" % "play-plugins-testng" % "2.4.2")
 ```
 
 Add the following to your project's `build.sbt` file:
@@ -29,7 +29,7 @@ Add the dependency in your `project/Build.scala` file.
 
 ```scala
 val appDependencies = Seq(
- "com.linkedin" %% "play-testng-helpers" % "2.4.0"
+ "com.linkedin" %% "play-testng-helpers" % "2.4.2"
 )
 ```
 
