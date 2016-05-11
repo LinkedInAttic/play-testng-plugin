@@ -22,18 +22,6 @@ object NGPlugin extends Plugin {
 
   def ngSettings: Seq[Setting[_]] = super.settings ++ Seq(
     testOptions := Seq(),
-    testOptions += Tests.Setup { loader =>
-      val loggerClass = playLoggerClass(loader)
-      if (loggerClass != null) {
-        loggerClass.getMethod("init", classOf[java.io.File]).invoke(null, new java.io.File("."))
-      }
-    },
-    testOptions += Tests.Cleanup { loader =>
-      val loggerClass = playLoggerClass(loader)
-      if (loggerClass != null) {
-        loggerClass.getMethod("shutdown").invoke(null)
-      }
-    },
     //testOptions += Tests.Argument(TestFrameworks.Specs2, "sequential", "true"),
     testOptions += Tests.Argument(TestFrameworks.JUnit,"junitxml", "console")
    ) ++
@@ -45,12 +33,4 @@ object NGPlugin extends Plugin {
          // If changing this, be sure to change in Build.scala also.
          "de.johoop" %% "sbt-testng-interface" % "3.0.2" % "test"))
   )
-
-  private def playLoggerClass(loader: ClassLoader) = {
-    try {
-      loader.loadClass("play.api.Logger")
-    } catch {
-      case e: ClassNotFoundException => null
-    }
-  }
 }
