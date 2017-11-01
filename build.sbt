@@ -13,8 +13,8 @@ lazy val NGHelpers = (project in file("helpers"))
     crossScalaVersions := Seq("2.11.11", "2.10.6"),
     libraryDependencies ++= Seq(
       "org.testng" % "testng" % "6.8.8", // % "provided"
-      "com.typesafe.play" %% "play-test" % "2.4.6", //% "provided"
-      "com.typesafe.play" %% "play-java" % "2.4.6" //% "provided"
+      "com.typesafe.play" %% "play-test" % "2.5.18", //% "provided"
+      "com.typesafe.play" %% "play-java" % "2.5.18" //% "provided"
     ))
 
 lazy val NGPlugin = (project in file("plugin"))
@@ -33,5 +33,5 @@ lazy val NGPlugin = (project in file("plugin"))
 
 def commonSettings: Seq[Def.Setting[_]] = Seq(
   organization := "com.linkedin.play-testng-plugin",
-  version := "2.4.5"
+  version := "2.5.0"
 )

@@ -8,7 +8,6 @@ import play.api.inject.Binding;
 import play.api.inject.package$;
 import play.inject.guice.GuiceApplicationBuilder;
 import play.inject.guice.GuiceBuilder;
-import play.test.FakeApplication;
 import play.test.Helpers;
 
 /**
@@ -18,17 +17,28 @@ import play.test.Helpers;
 public class FakeApplicationFactoryImpl implements FakeApplicationFactory {
   @Override
   public Application buildApplication(FakeApplicationFactoryArgs args) {
-    return shouldUseBuilder(args) ? buildFromBuilder(args) : buildFromFakeApp(args);
+    return buildFromBuilder(args);
   }
 
+  /**
+   * @deprecated We now always use a {@link GuiceApplicationBuilder}.
+   */
+  @SuppressWarnings("unused")
+  @Deprecated
   protected boolean shouldUseBuilder(FakeApplicationFactoryArgs args) {
-    return args.getBuilderClass().isPresent() || !args.getOverrides().isEmpty();
+    return true;
   }
 
+  /**
+   * @deprecated Play's FakeApplication is deprecated-- this will use a default GuiceApplicationBuilder instead,
+   * as though {@link FakeApplicationFactoryImpl#buildFromBuilder(FakeApplicationFactoryArgs)} was called.
+   */
+  @Deprecated
   protected Application buildFromFakeApp(FakeApplicationFactoryArgs args) {
-    return new FakeApplication(args.getPath(), Helpers.class.getClassLoader(), args.getConfig(), args.getPlugins(), args.getGlobal().orElse(null));
+    return buildFromBuilder(args);
   }
 
+  @SuppressWarnings({"unchecked", "deprecated"})
   protected Application buildFromBuilder(FakeApplicationFactoryArgs args) {
     Class<? extends GuiceBuilder> builderClass = args.getBuilderClass().orElse(GuiceApplicationBuilder.class);
     GuiceBuilder builder;
@@ -38,7 +48,7 @@ public class FakeApplicationFactoryImpl implements FakeApplicationFactory {
       throw new RuntimeException("Unable to instantiate application builder " + builderClass, e);
     }
     if (!args.getPlugins().isEmpty()) {
-      throw new RuntimeException("Using plugins isn't supported when using binding overrides or a GuiceBuilder.");
+      throw new RuntimeException("Using plugins isn't supported when using binding overrides for a GuiceBuilder.");
     }
 
     builder = (GuiceBuilder) builder.in(new Environment(args.getPath(), Helpers.class.getClassLoader(), Mode.TEST));

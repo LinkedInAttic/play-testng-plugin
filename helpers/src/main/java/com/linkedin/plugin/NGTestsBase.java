@@ -56,10 +56,10 @@ public abstract class NGTestsBase implements IHookable {
     }
 
     protected <A extends Annotation> A getAnnotationFromMethodOrClass(Class<A> c) {
-      Class clazz = testClass();
+      Class<A> clazz = testClass();
       Method m = testMethod();
 
-      A classAnn = (A) clazz.getAnnotation(c);
+      A classAnn = clazz.getAnnotation(c);
       A a = m.getAnnotation(c);
 
       if(a != null)
@@ -69,7 +69,7 @@ public abstract class NGTestsBase implements IHookable {
     }
 
     protected Map<String, Object> getConf() {
-      Map<String, Object> conf = new HashMap<String, Object>();
+      Map<String, Object> conf = new HashMap<>();
 
       if (getFakeAppAnnotation() == null)
         return conf;
@@ -101,6 +101,10 @@ public abstract class NGTestsBase implements IHookable {
       return conf;
     }
 
+    /**
+     * @deprecated Use dependency injection with Play 2.4 instead of plugins.
+     */
+    @Deprecated
     protected List<String> getPlugins(){
       Class clazz = testClass();
       Method m = testMethod();
@@ -108,7 +112,7 @@ public abstract class NGTestsBase implements IHookable {
       WithPlugins classPlugins = (WithPlugins)clazz.getAnnotation(WithPlugins.class);
       WithPlugins methodPlugins = m.getAnnotation(WithPlugins.class);
 
-      List<String> plugins = new ArrayList<String>();
+      List<String> plugins = new ArrayList<>();
       if(classPlugins != null)
         plugins.addAll(Arrays.asList(classPlugins.value()));
       if(methodPlugins != null)
@@ -121,22 +125,23 @@ public abstract class NGTestsBase implements IHookable {
       return clz != null && !Object.class.equals(clz);
     }
 
-    protected <T> T instantiate(Class<?> clazz) {
+    protected <U> U instantiate(Class<U> clazz) {
       try {
-        return (T) clazz.newInstance();
+        return clazz.newInstance();
       } catch (Exception e) {
         throw new RuntimeException("Unable to instantiate class " + clazz);
       }
     }
 
-    private Stream<Binding<?>> toStream(WithOverrides overrides) {
+    private Stream<? extends Binding<?>> toStream(WithOverrides overrides) {
       return Optional.ofNullable(overrides).map(o -> Arrays.stream(o.value()).map(this::toBinding)).orElse(Stream.empty());
     }
 
-    private Stream<Binding<?>> toStream(BindingOverride override) {
-      return Optional.ofNullable(override).map(o -> Stream.<Binding<?>>of(toBinding(o))).orElse(Stream.<Binding<?>>empty());
+    private Stream<? extends Binding<?>> toStream(BindingOverride override) {
+      return Optional.ofNullable(override).map(o -> Stream.<Binding<?>>of(toBinding(o))).orElse(Stream.empty());
     }
 
+    @SuppressWarnings("unchecked")
     private Binding<?> toBinding(BindingOverride override) {
       BindingKey bindingKey = package$.MODULE$.bind(override.target());
       if (! Object.class.equals(override.annotationQualifier())) {
@@ -171,7 +176,8 @@ public abstract class NGTestsBase implements IHookable {
       return itr.getMethod().getConstructorOrMethod().getMethod();
     }
 
-    private Class testClass() {
+    @SuppressWarnings("unchecked")
+    private <A> Class<A> testClass() {
       return itr.getTestClass().getRealClass();
     }
 

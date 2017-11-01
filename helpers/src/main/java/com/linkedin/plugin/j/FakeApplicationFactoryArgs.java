@@ -1,5 +1,6 @@
 package com.linkedin.plugin.j;
 
+import javax.annotation.Nullable;
 import play.GlobalSettings;
 import play.api.inject.Binding;
 import play.inject.guice.GuiceBuilder;
@@ -11,12 +12,15 @@ import java.util.Optional;
 
 public class FakeApplicationFactoryArgs {
   private final File _path;
-  private final Optional<Class<? extends GuiceBuilder>> _builderClass;
-  private final Optional<GlobalSettings> _global;
+  private final Class<? extends GuiceBuilder> _builderClass;
   private final List<Binding<?>> _overrides;
   private final Map<String, Object> _config;
   private final List<String> _plugins;
 
+  @Deprecated
+  private final GlobalSettings _global;
+
+  @Deprecated
   public FakeApplicationFactoryArgs(File path,
                                     Optional<Class<? extends GuiceBuilder>> builderClass,
                                     Optional<GlobalSettings> global,
@@ -24,8 +28,22 @@ public class FakeApplicationFactoryArgs {
                                     Map<String, Object> config,
                                     List<String> plugins) {
     _path = path;
+    _builderClass = builderClass.orElse(null);
+    _global = global.orElse(null);
+    _overrides = overrides;
+    _config = config;
+    _plugins = plugins;
+  }
+
+  @SuppressWarnings("deprecation") // because we need to nil-out the deprecated `_global` member variable
+  public FakeApplicationFactoryArgs(File path,
+                                    @Nullable Class<? extends GuiceBuilder> builderClass,
+                                    List<Binding<?>> overrides,
+                                    Map<String, Object> config,
+                                    List<String> plugins) {
+    _path = path;
     _builderClass = builderClass;
-    _global = global;
+    _global = null;
     _overrides = overrides;
     _config = config;
     _plugins = plugins;
@@ -36,11 +54,12 @@ public class FakeApplicationFactoryArgs {
   }
 
   public Optional<Class<? extends GuiceBuilder>> getBuilderClass() {
-    return _builderClass;
+    return Optional.ofNullable(_builderClass);
   }
 
+  @Deprecated
   public Optional<GlobalSettings> getGlobal() {
-    return _global;
+    return Optional.ofNullable(_global);
   }
 
   public List<Binding<?>> getOverrides() {
