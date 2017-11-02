@@ -46,17 +46,4 @@ object NGPlugin extends Plugin {
         // If changing this, be sure to change in Build.scala also.
         "de.johoop" %% "sbt-testng-interface" % "3.0.2" % "test")).value
     )
-
-  def ngBuildSettings: Seq[Setting[_]] = super.buildSettings ++ Seq(
-    testOptions := Seq(),
-    //testOptions += Tests.Argument(TestFrameworks.Specs2, "sequential", "true"),
-    testOptions += Tests.Argument(TestFrameworks.JUnit,"junitxml", "console")) ++
-    testNGSettings ++
-    Seq(
-      testNGParameters ++= Seq("-listener", "com.linkedin.plugin.FailSkippedTestsListener"),
-      libraryDependencies ++= (testNGVersion)(v => Seq(
-        "org.testng" % "testng" % v % "test->default",
-        // If changing this, be sure to change in Build.scala also.
-        "de.johoop" %% "sbt-testng-interface" % "3.0.2" % "test")).value
-    )
 }
