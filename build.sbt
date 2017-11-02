@@ -10,6 +10,7 @@ lazy val NGHelpers = (project in file("helpers"))
   .settings(
     name := "play-testng-helpers",
     scalaVersion := "2.11.11",
+    crossScalaVersions := Seq("2.11.11", "2.12.4"),
     libraryDependencies ++= Seq(
       "org.testng" % "testng" % "6.8.8", // % "provided"
       "com.typesafe.play" %% "play-test" % "2.5.18", //% "provided"
