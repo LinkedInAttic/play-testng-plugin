@@ -101,26 +101,6 @@ public abstract class NGTestsBase implements IHookable {
       return conf;
     }
 
-    /**
-     * @deprecated Use dependency injection with Play 2.4 instead of plugins.
-     */
-    @Deprecated
-    protected List<String> getPlugins(){
-      Class clazz = testClass();
-      Method m = testMethod();
-
-      WithPlugins classPlugins = (WithPlugins)clazz.getAnnotation(WithPlugins.class);
-      WithPlugins methodPlugins = m.getAnnotation(WithPlugins.class);
-
-      List<String> plugins = new ArrayList<>();
-      if(classPlugins != null)
-        plugins.addAll(Arrays.asList(classPlugins.value()));
-      if(methodPlugins != null)
-        plugins.addAll(Arrays.asList(methodPlugins.value()));
-
-      return plugins;
-    }
-
     protected boolean isDefined(Class clz) {
       return clz != null && !Object.class.equals(clz);
     }

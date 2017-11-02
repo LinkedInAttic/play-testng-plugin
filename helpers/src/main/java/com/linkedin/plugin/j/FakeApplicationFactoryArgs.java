@@ -15,12 +15,11 @@ public class FakeApplicationFactoryArgs {
   private final Class<? extends GuiceBuilder> _builderClass;
   private final List<Binding<?>> _overrides;
   private final Map<String, Object> _config;
-  private final List<String> _plugins;
 
   @Deprecated
   private final GlobalSettings _global;
 
-  @Deprecated
+  @Deprecated @SuppressWarnings("unused")
   public FakeApplicationFactoryArgs(File path,
                                     Optional<Class<? extends GuiceBuilder>> builderClass,
                                     Optional<GlobalSettings> global,
@@ -32,21 +31,18 @@ public class FakeApplicationFactoryArgs {
     _global = global.orElse(null);
     _overrides = overrides;
     _config = config;
-    _plugins = plugins;
   }
 
   @SuppressWarnings("deprecation") // because we need to nil-out the deprecated `_global` member variable
   public FakeApplicationFactoryArgs(File path,
                                     @Nullable Class<? extends GuiceBuilder> builderClass,
                                     List<Binding<?>> overrides,
-                                    Map<String, Object> config,
-                                    List<String> plugins) {
+                                    Map<String, Object> config) {
     _path = path;
     _builderClass = builderClass;
     _global = null;
     _overrides = overrides;
     _config = config;
-    _plugins = plugins;
   }
 
   public File getPath() {
@@ -68,9 +64,5 @@ public class FakeApplicationFactoryArgs {
 
   public Map<String, Object> getConfig() {
     return _config;
-  }
-
-  public List<String> getPlugins() {
-    return _plugins;
   }
 }

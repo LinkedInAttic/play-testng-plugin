@@ -11,8 +11,8 @@ import play.inject.guice.GuiceBuilder;
 import play.test.Helpers;
 
 /**
- * Default implementation for building an Application. If a builder isn't specified and no overrides are present the Play
- * FakeApplication is used. Otherwise a builder is used. Using @WithPlugins and a builder or overrides isn't supported.
+ * Default implementation for building an Application. If a builder isn't specified, a default GuiceApplicationBuilder
+ * is used.
  */
 public class FakeApplicationFactoryImpl implements FakeApplicationFactory {
   @Override
@@ -46,9 +46,6 @@ public class FakeApplicationFactoryImpl implements FakeApplicationFactory {
       builder = builderClass.newInstance();
     } catch (Exception e) {
       throw new RuntimeException("Unable to instantiate application builder " + builderClass, e);
-    }
-    if (!args.getPlugins().isEmpty()) {
-      throw new RuntimeException("Using plugins isn't supported when using binding overrides for a GuiceBuilder.");
     }
 
     builder = (GuiceBuilder) builder.in(new Environment(args.getPath(), Helpers.class.getClassLoader(), Mode.TEST));

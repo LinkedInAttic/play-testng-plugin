@@ -56,7 +56,7 @@ public class NGTests extends NGTestsBase implements IHookable {
             Optional.of(instantiate(fa.withGlobal())),
             getOverrides(),
             getConf(),
-            getPlugins()
+            null
         );
       } else {
         // Use the newer constructor
@@ -64,8 +64,7 @@ public class NGTests extends NGTestsBase implements IHookable {
             new File(fa.path()),
             fa.guiceBuilder(),
             getOverrides(),
-            getConf(),
-            getPlugins()
+            getConf()
         );
       }
 
