@@ -3,6 +3,7 @@ import Defaults._
 lazy val root = (project in file("."))
   .settings(commonSettings: _*)
   .enablePlugins(CrossPerProjectPlugin)
+  .enablePlugins(TestNGPlugin)
   .aggregate(NGHelpers, NGPlugin)
 
 lazy val NGHelpers = (project in file("helpers"))
@@ -23,11 +24,11 @@ lazy val NGPlugin = (project in file("plugin"))
     name := "play-plugins-testng",
     sbtPlugin := true,
     scalaVersion := "2.10.6",
-    crossScalaVersions := Seq("2.10.6"),
+    crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.4"),
     libraryDependencies ++= Seq(
         // If changing this, be sure to change in NGPlugin.scala also.
-        sbtPluginExtra("de.johoop" % "sbt-testng-plugin" % "3.0.2", (sbtBinaryVersion in update).value, (scalaBinaryVersion in update).value),
-        "de.johoop" %% "sbt-testng-interface" % "3.0.2"
+        sbtPluginExtra("de.johoop" % "sbt-testng-plugin" % "3.1.1", (sbtBinaryVersion in update).value, (scalaBinaryVersion in update).value),
+        "de.johoop" %% "sbt-testng-interface" % "3.1.1"
     )
   )
 
