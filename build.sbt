@@ -3,7 +3,6 @@ import Defaults._
 lazy val root = (project in file("."))
   .settings(commonSettings: _*)
   .enablePlugins(CrossPerProjectPlugin)
-  .enablePlugins(TestNGPlugin)
   .aggregate(NGHelpers, NGPlugin)
 
 lazy val NGHelpers = (project in file("helpers"))

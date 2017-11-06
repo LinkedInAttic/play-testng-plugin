@@ -6,7 +6,7 @@ lazy val root = (project in file("."))
     name := "Sample",
     version := "2.5.0-SNAPSHOT",
     scalaVersion := "2.11.11",
-    crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.4"),
+    crossScalaVersions := Seq("2.11.11", "2.12.4"),
     libraryDependencies ++= Seq(
       "com.linkedin.play-testng-plugin" %% "play-testng-helpers" % "2.5.0"
     )
