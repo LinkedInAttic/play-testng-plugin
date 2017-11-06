@@ -18,10 +18,10 @@ import Keys._
 import de.johoop.testngplugin.TestNGPlugin
 import de.johoop.testngplugin.TestNGPlugin.autoImport._
 
-object NGPlugin extends Plugin {
+object NGPlugin extends AutoPlugin {
 
   @deprecated("Use ngProjectSettings or ngBuildSettings instead", "2.5.0")
-  def ngSettings: Seq[Setting[_]] = super.settings ++ Seq(
+  def ngSettings: Seq[Setting[_]] = super.projectSettings ++ Seq(
     testOptions := Seq(),
     //testOptions += Tests.Argument(TestFrameworks.Specs2, "sequential", "true"),
     testOptions += Tests.Argument(TestFrameworks.JUnit,"junitxml", "console")) ++

@@ -1,3 +1,4 @@
+import com.linkedin.plugin.NGPlugin
 import de.johoop.testngplugin.TestNGPlugin
 
 lazy val root = (project in file("."))
@@ -12,3 +13,4 @@ lazy val root = (project in file("."))
   )
   .enablePlugins(play.sbt.PlayJava)
   .enablePlugins(TestNGPlugin)
+  .enablePlugins(NGPlugin)
