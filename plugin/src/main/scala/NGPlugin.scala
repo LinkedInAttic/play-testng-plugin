@@ -20,7 +20,7 @@ import de.johoop.testngplugin.TestNGPlugin.autoImport._
 
 object NGPlugin extends AutoPlugin {
 
-  @deprecated("Use ngProjectSettings or ngBuildSettings instead", "2.5.0")
+  @deprecated("Use projectSettings instead", "2.5.0")
   def ngSettings: Seq[Setting[_]] = super.projectSettings ++ Seq(
     testOptions := Seq(),
     //testOptions += Tests.Argument(TestFrameworks.Specs2, "sequential", "true"),
@@ -34,7 +34,7 @@ object NGPlugin extends AutoPlugin {
          "de.johoop" %% "sbt-testng-interface" % "3.1.1" % "test")).value
   )
 
-  def ngProjectSettings: Seq[Setting[_]] = super.projectSettings ++ Seq(
+  override lazy val projectSettings: Seq[Setting[_]] = super.projectSettings ++ Seq(
     testOptions := Seq(),
     //testOptions += Tests.Argument(TestFrameworks.Specs2, "sequential", "true"),
     testOptions += Tests.Argument(TestFrameworks.JUnit,"junitxml", "console")) ++
