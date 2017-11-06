@@ -22,7 +22,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WithFakeApplication {
   String path() default ".";
-  @Deprecated Class<? extends play.api.GlobalSettings> withGlobal() default play.api.GlobalSettings.class;
   Class<? extends play.api.inject.guice.GuiceBuilder> guiceBuilder() default play.api.inject.guice.GuiceApplicationBuilder.class;
   Class<? extends FakeApplicationFactory> appFactory() default FakeApplicationFactoryImpl.class;
 }
