@@ -1,35 +1,40 @@
 # TestNG plugin
 
-This plugin is a TestNG runner for [Play Framework 2.4](http://www.playframework.org/).
+This plugin is a TestNG runner for [Play Framework 2.5](http://www.playframework.org/).
 It using the [TestNG sbt interface by jmhofer](https://bitbucket.org/jmhofer/sbt-testng-interface) to run TestNG Test suites, and adds Helpers.
 Example can be found in the `sample` folder.
 
 ## Usage
 
-### instalation
+### Installation
 
 #### Plugin
 
 Add the plugin in your `project/plugins.sbt` file.
 
 ```scala
-addSbtPlugin("com.linkedin" % "play-plugins-testng" % "2.4.5")
+addSbtPlugin("com.linkedin.play-testng-plugin" % "play-plugins-testng" % "2.5.0")
 ```
 
 Add the following to your project's `build.sbt` file:
 
 ```scala
-import com.linkedin.plugin.NGPlugin._
-ngSettings
+import com.linkedin.plugin.NGPlugin
+lazy val {{project name}} = (project in file ("."))
+  .settings(
+    {{your settings}}
+  )
+  {{{enable plugins, set dependencies, etc.}}}
+  .enablePlugins(NGPlugin)
 ```
 
 #### Helpers
 
-Add the dependency in your `project/Build.scala` file.
+Add the dependency in your `build.sbt` file.
 
 ```scala
 val appDependencies = Seq(
- "com.linkedin" %% "play-testng-helpers" % "2.4.5"
+ "com.linkedin.play-testng-plugin" %% "play-testng-helpers" % "2.5.0"
 )
 ```
 
@@ -53,7 +58,7 @@ running(fakeApplication(), new Runnable() {
 ```
 
 This Annotation can be used on Test methods and test classes.
-When it's used on a class, a FakeApplication will be started at the beginning of each test, and stop when the test finishes.
+When it's used on a class, a fake application created via a default `GuiceApplicationBuilder` will be started at the beginning of each test, and stop when the test finishes.
 
 ```java
 @WithFakeApplication
@@ -172,26 +177,9 @@ public class AllWithFakeApp extends NGTests {
 
 **Note:** `@Confs` and `@Conf` will be ignored if tests (class or method) are not annotated with `@WithFakeApplication`.
 
-#### Replacing plugins: @WithPlugins
-
-Using `@WithPlugins`, you can replace or add plugin to the FakeApplication ran for your test.
-
-```java
- @Test
- @WithFakeApplication
- @WithPlugins({"plugins.DummyPlugin"})
- public void aFailingTest() {
-   String f = play.Play.application().configuration().getString("test.fakeconf");
-   if(!f.equals("fake"))
-     throw new RuntimeException("Assertion failed");
- }
-```
-
-Like `@WithFakeApplication`, `@WithPlugins` can be used on classes.
-
 ## License
 
-Copyright 2012 LinkedIn
+Copyright 2012–2017 LinkedIn
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

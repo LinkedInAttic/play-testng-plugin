@@ -42,20 +42,35 @@ public class NGTests extends NGTestsBase implements IHookable {
       super(testResult, WithFakeApplication.class, WithTestServer.class);
     }
 
+    // we're only *deprecating* the GlobalSettings at this point, we still have to support it
+    @SuppressWarnings("deprecation")
     private Application buildFakeApplication(WithFakeApplication fa) {
       if (fa == null) {
         return null;
       }
 
       FakeApplicationFactory appFactory = instantiate(fa.appFactory());
-      return appFactory.buildScalaApplication(new FakeApplicationFactoryArgs(
-          new File(fa.path()),
-          isDefined(fa.guiceBuilder()) ? Optional.of(fa.guiceBuilder()) : Optional.<Class<? extends GuiceBuilder>>empty(),
-          isDefined(fa.withGlobal()) ? Optional.of(instantiate(fa.withGlobal())) : Optional.<GlobalSettings>empty(),
-          getOverrides(),
-          getConf(),
-          getPlugins()
-      ));
+      FakeApplicationFactoryArgs args;
+      if (isDefined(fa.withGlobal())) {
+        args = new FakeApplicationFactoryArgs(
+            new File(fa.path()),
+            isDefined(fa.guiceBuilder()) ? Optional.of(fa.guiceBuilder()) : Optional.<Class<? extends GuiceBuilder>>empty(),
+            Optional.of(instantiate(fa.withGlobal())),
+            getOverrides(),
+            getConf(),
+            null
+        );
+      } else {
+        // Use the newer constructor
+        args = new FakeApplicationFactoryArgs(
+            new File(fa.path()),
+            fa.guiceBuilder(),
+            getOverrides(),
+            getConf()
+        );
+      }
+
+      return appFactory.buildScalaApplication(args);
     }
 
     private TestServer buildTestServer(WithTestServer ts) {
@@ -76,6 +91,7 @@ public class NGTests extends NGTestsBase implements IHookable {
     return _testBrowser;
   }
 
+
   public void run(final IHookCallBack icb, final ITestResult testResult) {
 
     AnnotationsReader reader = new AnnotationsReader(testResult);
@@ -86,7 +102,7 @@ public class NGTests extends NGTestsBase implements IHookable {
     if (fa != null)
     {
       Application app = reader.buildFakeApplication(fa);
-      Helpers.running(app, new AbstractFunction0() {
+      Helpers.running(app, new AbstractFunction0<Object>() {
         @Override
         public Object apply() {
           icb.runTestMethod(testResult);

@@ -14,7 +14,6 @@ import com.linkedin.plugin.j.*;
   @Conf(key="test.fakeconf", value="fake")
 })
 @Conf(key="test.anotherConf", value="fake")
-@WithPlugins({"plugins.DummyPlugin"})
 public class AllWithFakeApp extends NGTests {
 
  @Test

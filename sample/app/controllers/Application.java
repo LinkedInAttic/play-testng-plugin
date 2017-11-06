@@ -10,7 +10,7 @@ public class Application extends Controller {
     /**
      * Home page
      */
-    public static Result index() {
+    public Result index() {
         return ok("Helloworld");
     }
 }

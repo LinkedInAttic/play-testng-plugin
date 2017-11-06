@@ -15,22 +15,35 @@ package com.linkedin.plugin
 
 import sbt._
 import Keys._
+import de.johoop.testngplugin.TestNGPlugin
+import de.johoop.testngplugin.TestNGPlugin.autoImport._
 
-import de.johoop.testngplugin.TestNGPlugin._
+object NGPlugin extends AutoPlugin {
 
-object NGPlugin extends Plugin {
-
-  def ngSettings: Seq[Setting[_]] = super.settings ++ Seq(
+  @deprecated("Use projectSettings instead", "2.5.0")
+  def ngSettings: Seq[Setting[_]] = super.projectSettings ++ Seq(
     testOptions := Seq(),
     //testOptions += Tests.Argument(TestFrameworks.Specs2, "sequential", "true"),
-    testOptions += Tests.Argument(TestFrameworks.JUnit,"junitxml", "console")
-   ) ++
-   testNGSettings ++
-   Seq(
+    testOptions += Tests.Argument(TestFrameworks.JUnit,"junitxml", "console")) ++
+    TestNGPlugin.projectSettings ++
+    Seq(
      testNGParameters ++= Seq("-listener", "com.linkedin.plugin.FailSkippedTestsListener"),
-       libraryDependencies <++= (testNGVersion)(v => Seq(
+       libraryDependencies ++= testNGVersion(v => Seq(
          "org.testng" % "testng" % v % "test->default",
          // If changing this, be sure to change in Build.scala also.
-         "de.johoop" %% "sbt-testng-interface" % "3.0.2" % "test"))
+         "de.johoop" %% "sbt-testng-interface" % "3.1.1" % "test")).value
   )
+
+  override lazy val projectSettings: Seq[Setting[_]] = super.projectSettings ++ Seq(
+    testOptions := Seq(),
+    //testOptions += Tests.Argument(TestFrameworks.Specs2, "sequential", "true"),
+    testOptions += Tests.Argument(TestFrameworks.JUnit,"junitxml", "console")) ++
+    TestNGPlugin.projectSettings ++
+    Seq(
+      testNGParameters ++= Seq("-listener", "com.linkedin.plugin.FailSkippedTestsListener"),
+      libraryDependencies ++= (testNGVersion)(v => Seq(
+        "org.testng" % "testng" % v % "test->default",
+        // If changing this, be sure to change in Build.scala also.
+        "de.johoop" %% "sbt-testng-interface" % "3.1.1" % "test")).value
+    )
 }

@@ -7,29 +7,28 @@ import play.api.Mode;
 import play.api.inject.guice.GuiceApplicationBuilder;
 import play.api.inject.guice.GuiceBuilder;
 import play.api.inject.package$;
-import play.api.mvc.Handler;
-import play.api.test.FakeApplication;
-import play.api.test.Helpers;
 import play.libs.Scala;
-import scala.PartialFunction$;
-import scala.Tuple2;
-
-import java.util.Collections;
 
 /**
- * Default implementation for building an Application. If a builder isn't specified and no overrides are present the Play
- * FakeApplication is used. Otherwise a builder is used. Using @WithPlugins and a builder or overrides isn't supported.
+ * Default implementation for building an Application. If a builder isn't specified, a default GuiceApplicationBuilder
+ * is used.
  */
 public class FakeApplicationFactoryImpl implements FakeApplicationFactory {
   @Override
   public Application buildScalaApplication(FakeApplicationFactoryArgs args) {
-    return shouldUseBuilder(args) ? buildFromBuilder(args) : buildFromFakeApp(args);
+    return buildFromBuilder(args);
   }
 
+  /**
+   * @deprecated {@link play.api.test.FakeApplication} is deprecated, we always use Guice builders now.
+   */
+  @SuppressWarnings("unused")
+  @Deprecated
   protected boolean shouldUseBuilder(FakeApplicationFactoryArgs args) {
-    return args.getBuilderClass().isPresent() || !args.getOverrides().isEmpty();
+    return true;
   }
 
+  @SuppressWarnings({"unchecked", "deprecated"})
   protected Application buildFromBuilder(FakeApplicationFactoryArgs args) {
     Class<? extends GuiceBuilder> builderClass = args.getBuilderClass().orElse(GuiceApplicationBuilder.class);
     GuiceBuilder builder;
@@ -37,9 +36,6 @@ public class FakeApplicationFactoryImpl implements FakeApplicationFactory {
       builder = builderClass.newInstance();
     } catch (Exception e) {
       throw new RuntimeException("Unable to instantiate application builder " + builderClass, e);
-    }
-    if (!args.getPlugins().isEmpty()) {
-      throw new RuntimeException("Using plugins isn't supported when using binding overrides or a GuiceBuilder.");
     }
     builder = (GuiceBuilder) builder.in(new Environment(args.getPath(), play.test.Helpers.class.getClassLoader(), Mode.Test()));
     builder = (GuiceBuilder) builder.configure(Scala.asScala(args.getConfig()));
@@ -55,16 +51,13 @@ public class FakeApplicationFactoryImpl implements FakeApplicationFactory {
     return builder.injector().instanceOf(Application.class);
   }
 
+  /**
+   * @deprecated {@link play.api.test.FakeApplication} is deprecated. This calls through to
+   * {@link FakeApplicationFactoryImpl#buildFromBuilder(FakeApplicationFactoryArgs)} now.
+   */
+  @Deprecated
   protected Application buildFromFakeApp(FakeApplicationFactoryArgs args) {
-    return new FakeApplication(
-        args.getPath(),
-        Helpers.class.getClassLoader(),
-        Scala.toSeq(args.getPlugins()),
-        Scala.toSeq(Collections.<String>emptyList()),
-        Scala.asScala(args.getConfig()),
-        scala.Option.apply(args.getGlobal().orElse(null)),
-        PartialFunction$.MODULE$.<Tuple2<String, String>, Handler>empty()
-    );
+    return buildFromBuilder(args);
 
   }
 }
