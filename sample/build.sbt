@@ -1,4 +1,3 @@
-import Defaults._
 import de.johoop.testngplugin.TestNGPlugin
 
 lazy val root = (project in file("."))
