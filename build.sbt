@@ -32,5 +32,5 @@ lazy val NGPlugin = (project in file("plugin"))
 
 def commonSettings: Seq[Def.Setting[_]] = Seq(
   organization := "com.linkedin.play-testng-plugin",
-  version := "2.6.0-SNAPSHOT"
+  version := "2.6.0"
 )
