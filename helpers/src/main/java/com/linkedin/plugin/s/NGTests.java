@@ -18,16 +18,14 @@ import org.testng.IHookCallBack;
 import org.testng.IHookable;
 import org.testng.ITestResult;
 import play.api.Application;
-import play.api.GlobalSettings;
-import play.api.inject.guice.GuiceBuilder;
 import play.api.test.Helpers;
 import play.api.test.TestBrowser;
 import play.api.test.TestServer;
+import play.core.server.ServerConfig;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.AbstractFunction1;
 
 import java.io.File;
-import java.util.Optional;
 
 import static play.test.Helpers.HTMLUNIT;
 
@@ -42,40 +40,33 @@ public class NGTests extends NGTestsBase implements IHookable {
       super(testResult, WithFakeApplication.class, WithTestServer.class);
     }
 
-    // we're only *deprecating* the GlobalSettings at this point, we still have to support it
-    @SuppressWarnings("deprecation")
     private Application buildFakeApplication(WithFakeApplication fa) {
       if (fa == null) {
         return null;
       }
 
       FakeApplicationFactory appFactory = instantiate(fa.appFactory());
-      FakeApplicationFactoryArgs args;
-      if (isDefined(fa.withGlobal())) {
-        args = new FakeApplicationFactoryArgs(
-            new File(fa.path()),
-            isDefined(fa.guiceBuilder()) ? Optional.of(fa.guiceBuilder()) : Optional.<Class<? extends GuiceBuilder>>empty(),
-            Optional.of(instantiate(fa.withGlobal())),
-            getOverrides(),
-            getConf(),
-            null
-        );
-      } else {
-        // Use the newer constructor
-        args = new FakeApplicationFactoryArgs(
-            new File(fa.path()),
-            fa.guiceBuilder(),
-            getOverrides(),
-            getConf()
-        );
-      }
+      FakeApplicationFactoryArgs args = new FakeApplicationFactoryArgs(
+          new File(fa.path()),
+          fa.guiceBuilder(),
+          getOverrides(),
+          getConf()
+      );
 
       return appFactory.buildScalaApplication(args);
     }
 
     private TestServer buildTestServer(WithTestServer ts) {
       Application fake = buildFakeApplication(ts.fakeApplication());
-      return new TestServer(ts.port(), fake, scala.Option.apply(null), scala.Option.apply(null));
+      ServerConfig config = ServerConfig.apply(
+          TestServer.class.getClassLoader(),
+          new java.io.File("."),
+          scala.Option.apply(ts.port()),
+          scala.Option.empty(),
+          "0.0.0.0",
+          play.Mode.TEST.asScala(),
+          System.getProperties());
+      return new TestServer(config, fake, scala.Option.apply(null));
     }
   }
 

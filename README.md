@@ -1,6 +1,6 @@
 # TestNG plugin
 
-This plugin is a TestNG runner for [Play Framework 2.5](http://www.playframework.org/).
+This plugin is a TestNG runner for [Play Framework 2.6](http://www.playframework.org/).
 It using the [TestNG sbt interface by jmhofer](https://bitbucket.org/jmhofer/sbt-testng-interface) to run TestNG Test suites, and adds Helpers.
 Example can be found in the `sample` folder.
 
@@ -13,7 +13,7 @@ Example can be found in the `sample` folder.
 Add the plugin in your `project/plugins.sbt` file.
 
 ```scala
-addSbtPlugin("com.linkedin.play-testng-plugin" % "play-plugins-testng" % "2.5.0")
+addSbtPlugin("com.linkedin.play-testng-plugin" % "play-plugins-testng" % "2.6.0")
 ```
 
 Add the following to your project's `build.sbt` file:
@@ -34,7 +34,7 @@ Add the dependency in your `build.sbt` file.
 
 ```scala
 val appDependencies = Seq(
- "com.linkedin.play-testng-plugin" %% "play-testng-helpers" % "2.5.0"
+ "com.linkedin.play-testng-plugin" %% "play-testng-helpers" % "2.6.0"
 )
 ```
 

@@ -158,7 +158,7 @@ public abstract class NGTestsBase implements IHookable {
 
     @SuppressWarnings("unchecked")
     private <A> Class<A> testClass() {
-      return itr.getTestClass().getRealClass();
+      return (Class<A>) itr.getTestClass().getRealClass();
     }
 
 

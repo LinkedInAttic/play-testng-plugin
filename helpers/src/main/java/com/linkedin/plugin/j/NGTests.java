@@ -18,14 +18,11 @@ import org.testng.IHookCallBack;
 import org.testng.IHookable;
 import org.testng.ITestResult;
 import play.Application;
-import play.GlobalSettings;
-import play.inject.guice.GuiceBuilder;
 import play.test.Helpers;
 import play.test.TestBrowser;
 import play.test.TestServer;
 
 import java.io.File;
-import java.util.Optional;
 
 import static play.test.Helpers.HTMLUNIT;
 
@@ -40,33 +37,18 @@ public class NGTests extends NGTestsBase implements IHookable {
       super(testResult, WithFakeApplication.class, WithTestServer.class);
     }
 
-    // we're only *deprecating* the GlobalSettings/Plugins at this point, we still have to support it
-    @SuppressWarnings("deprecation")
     private Application buildFakeApplication(WithFakeApplication fa) {
       if (fa == null) {
         return null;
       }
 
       FakeApplicationFactory appFactory = instantiate(fa.appFactory());
-      FakeApplicationFactoryArgs args;
-      if (isDefined(fa.withGlobal())) {
-        args = new FakeApplicationFactoryArgs(
-            new File(fa.path()),
-            isDefined(fa.guiceBuilder()) ? Optional.of(fa.guiceBuilder()) : Optional.<Class<? extends GuiceBuilder>>empty(),
-            Optional.of(instantiate(fa.withGlobal())),
-            getOverrides(),
-            getConf(),
-            null
-        );
-      } else {
-        // Use the newer constructor
-        args = new FakeApplicationFactoryArgs(
-            new File(fa.path()),
-            fa.guiceBuilder(),
-            getOverrides(),
-            getConf()
-        );
-      }
+      FakeApplicationFactoryArgs args = new FakeApplicationFactoryArgs(
+          new File(fa.path()),
+          fa.guiceBuilder(),
+          getOverrides(),
+          getConf()
+      );
 
       return appFactory.buildApplication(args);
     }
